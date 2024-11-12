@@ -31,26 +31,6 @@ class AntibodyTxtJSON:
                             else:
                                 accumulate.append(split_line[0])
 
-        #             if len(split_line) == 1 and ":" in split_line[0]:
-        #                 hanging_key = split_line[0]
-        #                 print(f"Inner key: {hanging_key}")
-        #             elif len(split_line) == 1:
-        #                 accumulate.append(split_line[0])
-        #                 print(f"Accumulate: {accumulate}")
-        #             else:
-        #                 if hanging_key is not None:
-        #                     antibody_dict[hanging_key] = accumulate
-        #                     print([hanging_key, accumulate])
-        #                     hanging_key = None
-        #                     accumulate = []
-        #                 else:
-        #                     antibody_dict[split_line[0]] = split_line[1]
-        #                     print(split_line)
-        #         if hanging_key is not None:
-        #             antibody_dict[hanging_key] = accumulate
-        #             print([hanging_key, accumulate])
-        #             hanging_key = None
-        #             accumulate = []
         print(f"Antibody Dict: {antibody_dict}")
         return antibody_dict
 
