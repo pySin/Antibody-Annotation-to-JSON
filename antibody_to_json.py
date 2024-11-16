@@ -11,10 +11,31 @@ class AntibodyTxtJSON:
     def txt_to_dict(filename):
         antibody_dict = {}
         hanging_key = None
-        accumulate = []
+        # accumulate = []
+        chain = ""
         with open(filename, "r") as f:
             for line in f.readlines():
                 if len(line) > 1:
+                    if line.startswith("Note"):
+                        note_line = line.strip().split(": ", 1)
+                        antibody_dict[f"{split_line[0]}-Note"] = note_line[1]
+                        continue
+
+                    if line.startswith("Antigen"):
+                        antigen_line = line.strip().split(": ", 1)
+                        antibody_dict[f"{antigen_line[0]}"] = \
+                            antigen_line[1][:antigen_line[1].index("(") - 1]
+                        antibody_dict["Antigen-Gene"] = antigen_line[1].split()[-1][1:-2]
+                        continue
+
+                    if line.startswith("CDR") and not line.startswith("CDRSource"):
+                        cdr_line = line.strip().split(": ", 1)
+                        print(cdr_line)
+                        antibody_dict[f"{cdr_line[0]}"] = \
+                            cdr_line[1][:cdr_line[1].index("(") - 1]
+                        antibody_dict[f"{cdr_line[0]}-Range"] = cdr_line[1].split()[-1][1:-2]
+                        continue
+
                     split_line = line.strip().split(": ", 1)
 
                     if len(split_line) == 2:
@@ -25,11 +46,12 @@ class AntibodyTxtJSON:
                             print(f"One value: {split_line}")
                         else:
                             if split_line[0] == "//":
-                                antibody_dict[hanging_key] = accumulate
+                                antibody_dict[hanging_key] = chain
                                 hanging_key = None
-                                accumulate = []
+                                chain = ""
                             else:
-                                accumulate.append(split_line[0])
+                                # accumulate.append(split_line[0])
+                                chain += "".join(split_line[0].split(" ")[:-1]).strip()
 
         print(f"Antibody Dict: {antibody_dict}")
         return antibody_dict
