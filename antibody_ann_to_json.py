@@ -28,6 +28,7 @@ class AntibodyToJSON:
             return records
 
     def single_file_transfer(self, filename):
+        # Produce JSON file from .txt annotation file
         current_records = self.read_devide_records(filename)
         for record in current_records:
             key = record.split(":")[0]
