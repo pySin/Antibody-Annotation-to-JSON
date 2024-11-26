@@ -8,6 +8,7 @@ class AntibodyToJSON:
     def __init__(self, path):
         self.path = path
         self.files = os.listdir(path)
+        # print(self.files)
         self.antibody_ann_dict = {}
         self.old_key = None
         self.methods = {
@@ -47,14 +48,20 @@ class AntibodyToJSON:
             self.old_key = key
 
     def antigen_record(self, record):
-        key, value = record.split(":")
+        key, value = record.split(":", 1)
         self.antibody_ann_dict[key] = " ".join(value.split(" ")[:-1]).strip()
         self.antibody_ann_dict[key + "-Gene"] = value.split(" ")[-1][1:-1]
-        print(f"Main Dictionary: {self.antibody_ann_dict}")
+        # print(f"Main Dictionary: {self.antibody_ann_dict}")
 
     def note_record(self, record):
-        key, value = record.split(":")
+        key, value = record.split(":", 1)
 
         if key != "Note":
-            range = key.replace("Note", "")
-            print(f"Note range: {range}")
+            note_range = key.replace("Note", "")
+            # print(f"Note range: {note_range}")
+            self.antibody_ann_dict[self.old_key + note_range + "-Note"] = value.strip()
+        else:
+            self.antibody_ann_dict[self.old_key + "-" + key] = value.strip()
+        for item in self.antibody_ann_dict:
+            print(f"Antibody Dict Item: {item}")
+
