@@ -53,9 +53,10 @@ class AntibodyTxtJSON:
 
 
 def main():
+    filename = "11678.txt"
     antibody_json = AntibodyTxtJSON()
-    antibody_dict_j = antibody_json.txt_to_dict("11948.txt")
-    with open("data.json", "w") as jf:
+    antibody_dict_j = antibody_json.txt_to_dict(filename)
+    with open(f"{filename.split('.')[0]}.json", "w") as jf:
         json.dump(antibody_dict_j, jf, indent=4)
 
 
