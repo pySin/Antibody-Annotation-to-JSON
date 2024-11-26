@@ -44,3 +44,6 @@ class AntibodyToJSON:
         self.antibody_ann_dict[key] = " ".join(value.split(" ")[:-1]).strip()
         self.antibody_ann_dict[key + "-Gene"] = value.split(" ")[-1][1:-1]
         print(f"Main Dictionary: {self.antibody_ann_dict}")
+
+    def note_record(self, record):
+        pass
