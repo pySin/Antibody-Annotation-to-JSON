@@ -9,17 +9,23 @@ class AntibodyToJSON:
         self.path = path
         self.files = os.listdir(path)
 
-    def read_define_records(self, filename):
+    def read_devide_records(self, filename):
         with open(filename, "r") as f:
-            content = [record.strip() for record in f.read().split(";")]
-            # for item in content:
-            #     print(item)
-            print(content)
+            # Split by semicolon and filter new lines(\n)
+            content = [record.replace("\n", "") for record in f.read().split(";")]
+            records = []
+            for r in content:
+                if "//" in r:
+                    chains = r.split("//")
+                    [records.append(c) for c in chains]
+                else:
+                    records.append(r)
+            [print(re) for re in records]
 
 
 def main():
     antibody_json = AntibodyToJSON("samples")
-    antibody_json.read_define_records(antibody_json.files[0])
+    antibody_json.read_devide_records(antibody_json.files[1])
 
 
 if __name__ == "__main__":
