@@ -7,7 +7,7 @@ class AntibodyAnnRunner:
         self.aa_run = antibody_ann_to_json.AntibodyToJSON(path)
 
     def run(self):
-        self.aa_run.single_file_transfer(self.aa_run.files[0])
+        self.aa_run.single_file_transfer(self.aa_run.files[3])
 
 
 def main():

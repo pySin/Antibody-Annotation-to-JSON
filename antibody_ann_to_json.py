@@ -9,8 +9,10 @@ class AntibodyToJSON:
         self.path = path
         self.files = os.listdir(path)
         self.antibody_ann_dict = {}
+        self.old_key = None
         self.methods = {
-            "Antigen": self.antigen_record
+            "Antigen": self.antigen_record,
+            "Note": self.note_record
         }
 
     def read_devide_records(self, filename):
@@ -33,11 +35,16 @@ class AntibodyToJSON:
         current_records = self.read_devide_records(filename)
         for record in current_records:
 
+            if record.startswith("Note"):
+                self.note_record(record)
+                continue
+
             key = record.split(":")[0]
             key = key[:key.index("[")] if "[" in key else key
 
             if key in self.methods:
                 self.methods[key](record)
+            self.old_key = key
 
     def antigen_record(self, record):
         key, value = record.split(":")
@@ -46,4 +53,8 @@ class AntibodyToJSON:
         print(f"Main Dictionary: {self.antibody_ann_dict}")
 
     def note_record(self, record):
-        pass
+        key, value = record.split(":")
+
+        if key != "Note":
+            range = key.replace("Note", "")
+            print(f"Note range: {range}")
