@@ -20,7 +20,10 @@ class AntibodyToJSON:
                     [records.append(c) for c in chains]
                 else:
                     records.append(r)
-            [print(re) for re in records]
+            # [print(re) for re in records]
+            return records
 
-
-
+    def single_file_transfer(self, filename):
+        current_records = self.read_devide_records(filename)
+        for record in current_records:
+            pass
