@@ -23,10 +23,4 @@ class AntibodyToJSON:
             [print(re) for re in records]
 
 
-def main():
-    antibody_json = AntibodyToJSON("samples")
-    antibody_json.read_devide_records(antibody_json.files[1])
 
-
-if __name__ == "__main__":
-    main()
