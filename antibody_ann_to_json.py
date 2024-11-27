@@ -49,9 +49,12 @@ class AntibodyToJSON:
 
     def antigen_record(self, record):
         key, value = record.split(":", 1)
+
+        key = [key[:key.index("[")]] if "[" in key else key
+
         self.antibody_ann_dict[key] = " ".join(value.split(" ")[:-1]).strip()
-        self.antibody_ann_dict[key + "-Gene"] = value.split(" ")[-1][1:-1]
-        # print(f"Main Dictionary: {self.antibody_ann_dict}")
+        self.antibody_ann_dict[key.append("Gene")] = value.split(" ")[-1][1:-1]
+        print(f"Main Dictionary: {self.antibody_ann_dict}")
 
     def note_record(self, record):
         key, value = record.split(":", 1)
@@ -62,6 +65,6 @@ class AntibodyToJSON:
             self.antibody_ann_dict[self.old_key + note_range + "-Note"] = value.strip()
         else:
             self.antibody_ann_dict[self.old_key + "-" + key] = value.strip()
-        for item in self.antibody_ann_dict:
-            print(f"Antibody Dict Item: {item}")
+        # for item in self.antibody_ann_dict:
+        #     print(f"Antibody Dict Item: {item}")
 
