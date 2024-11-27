@@ -47,14 +47,22 @@ class AntibodyToJSON:
                 self.methods[key](record)
             self.old_key = key
 
+        for t_key, t_value in self.antibody_ann_dict.items():
+            print(f"Key: {t_key}, Value: {t_value}")
+
     def antigen_record(self, record):
         key, value = record.split(":", 1)
 
-        key = [key[:key.index("[")]] if "[" in key else key
+        if "[" in key:
+            name, region = key.split("[")
+            region = [int(num) for num in region[:-1].split(",")]
+            # print(f"Name: {name}, Region: {region}")
+            tuple_key = (name, tuple(region))
+            self.antibody_ann_dict[tuple_key] = " ".join(value.split(" ")[:-1]).strip()
+        else:
+            self.antibody_ann_dict[key] = " ".join(value.split(" ")[:-1]).strip()
 
-        self.antibody_ann_dict[key] = " ".join(value.split(" ")[:-1]).strip()
-        self.antibody_ann_dict[key.append("Gene")] = value.split(" ")[-1][1:-1]
-        print(f"Main Dictionary: {self.antibody_ann_dict}")
+        self.antibody_ann_dict[key + "-Gene"] = value.split(" ")[-1][1:-1]
 
     def note_record(self, record):
         key, value = record.split(":", 1)
