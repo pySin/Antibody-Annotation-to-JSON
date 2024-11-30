@@ -13,7 +13,9 @@ class AntibodyToJSON:
         self.old_key = None
         self.methods = {
             "Antigen": self.antigen_record,
-            "Note": self.note_record
+            "Note": self.note_record,
+            "Antigen-Note": self.antigen_note,
+            "CDR": self.cdr_record
         }
 
     def read_devide_records(self, filename):
@@ -28,17 +30,21 @@ class AntibodyToJSON:
                     [records.append(c) for c in chains]
                 else:
                     records.append(r)
-            # [print(re) for re in records]
             records = [r for r in records if len(r) > 2]
             return records
 
     def single_file_transfer(self, filename):
+
         # Produce JSON file from .txt annotation file
         current_records = self.read_devide_records(filename)
         for record in current_records:
 
             if record.startswith("Note"):
                 self.methods["Note"](record)
+                continue
+
+            if record.startswith("CDR"):
+                self.methods["CDR"](record)
                 continue
 
             key = record.split(":")[0]
@@ -50,18 +56,20 @@ class AntibodyToJSON:
                 self.normal_record(record)
             self.old_key = key
 
-        # for t_key, t_value in self.antibody_ann_dict.items():
-        #     print(f"Key: {t_key}, Value: {t_value}")
         print(f"Full Dict: {self.antibody_ann_dict}")
+
+        filename = filename.split("/")[1]
+        with open(f"{filename.split('.')[0]}.json", "w") as jf:
+            json.dump(self.antibody_ann_dict, jf, indent=4)
 
     def antigen_record(self, record):
         key, value = record.split(":", 1)
 
         if "[" in key:
             name_key, region = key.split("[")
-            region = region[:-1]
-            name = value.split(",")[0]
-            gene = value.split(" ")[-1][1:-1]
+            region = region[:-1].strip()
+            name = value.split(",")[0].strip()
+            gene = value.split(" ")[-1][1:-1].strip()
             if "Antigen" not in self.antibody_ann_dict:
                 antigen_data = [{"Region": region, "Name": name, "Gene": gene}]
                 self.antibody_ann_dict[name_key] = antigen_data
@@ -80,7 +88,10 @@ class AntibodyToJSON:
 
         if key != "Note":
             if self.old_key == "Antigen":
-                self.antigen_note(key, value)
+                self.methods["Antigen-Note"](key, value)
+                # self.antigen_note(key, value)
+            else:
+                self.antibody_ann_dict[self.old_key + "-" + "Note"] = value.strip()
         else:
             self.antibody_ann_dict[self.old_key + "-" + key] = value.strip()
         # for item in self.antibody_ann_dict:
@@ -95,8 +106,16 @@ class AntibodyToJSON:
                 # print(f"Antigen dict 2: {self.antibody_ann_dict[self.old_key][i]}")
                 if note_region == self.antibody_ann_dict[self.old_key][i]["Region"]:
                     # print(f"Regions equal.")
-                    self.antibody_ann_dict[self.old_key][i]["Note"] = value
+                    self.antibody_ann_dict[self.old_key][i]["Note"] = value.strip()
                     # print(f"Note Record: {self.antibody_ann_dict}")
+
+    def cdr_record(self, record):
+        key, value = record.split(":")
+        value = value.strip()
+        sequence = value.split(" ")[0]
+        residue = value.split(" ")[1][1:-1]
+        self.antibody_ann_dict[key] = sequence
+        self.antibody_ann_dict[key + "-Range"] = residue
 
     def normal_record(self, record):
         # print(f"Split Result: {record}")
