@@ -29,6 +29,7 @@ class AntibodyToJSON:
                 else:
                     records.append(r)
             # [print(re) for re in records]
+            records = [r for r in records if len(r) > 2]
             return records
 
     def single_file_transfer(self, filename):
@@ -45,11 +46,13 @@ class AntibodyToJSON:
 
             if key in self.methods:
                 self.methods[key](record)
+            else:
+                self.normal_record(record)
             self.old_key = key
 
         for t_key, t_value in self.antibody_ann_dict.items():
             print(f"Key: {t_key}, Value: {t_value}")
-        # print(self.antibody_ann_dict)
+        print(f"Full Dict: {self.antibody_ann_dict}")
 
     def antigen_record(self, record):
         key, value = record.split(":", 1)
@@ -80,11 +83,31 @@ class AntibodyToJSON:
         key, value = record.split(":", 1)
 
         if key != "Note":
-            note_range = key[5:-1]
-            # print(f"Note range: {note_range}")
-            # self.antibody_ann_dict[self.old_key + note_range + "-Note"] = value.strip()
+            note_region = key[5:-1]
+            # print(f"Note Range: {note_region}")
+            # print(f"Old Key: {self.old_key}")
+            # print(f"Current Dict: {self.antibody_ann_dict}")
+            if self.old_key == "Antigen":
+                for i in range(len(self.antibody_ann_dict[self.old_key])):
+                    if "Note" in self.antibody_ann_dict[self.old_key][i]:
+                        pass
+                    else:
+                        print(f"Antigen dict 2: {self.antibody_ann_dict[self.old_key][i]}")
+                        if note_region == self.antibody_ann_dict[self.old_key][i]["Region"]:
+                            print(f"Regions equal.")
+                            self.antibody_ann_dict[self.old_key][i]["Note"] = value
+                            print(f"Note Record: {self.antibody_ann_dict}")
+                # print(f"Note range: {note_range}")
+                # self.antibody_ann_dict[self.old_key + note_range + "-Note"] = value.strip()
         else:
             self.antibody_ann_dict[self.old_key + "-" + key] = value.strip()
         # for item in self.antibody_ann_dict:
         #     print(f"Antibody Dict Item: {item}")
 
+    def normal_record(self, record):
+        print(f"Split Result: {record}")
+        key, value = record.split(":", 1)
+        if "[" in key:
+            key = key.split("[")[0]
+        value = value.strip()
+        self.antibody_ann_dict[key] = value
