@@ -117,6 +117,14 @@ class AntibodyToJSON:
         self.antibody_ann_dict[key] = sequence
         self.antibody_ann_dict[key + "-Range"] = residue
 
+    def heavy_chain_record(self, record):
+        capital_letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        chain_sequence = ""
+        value = record.split(":")[1].strip()
+        for symbol in value:
+            chain_sequence += symbol if symbol in capital_letters else ""
+        self.antibody_ann_dict["Heavy Chain"] = chain_sequence
+
     def normal_record(self, record):
         # print(f"Split Result: {record}")
         key, value = record.split(":", 1)
