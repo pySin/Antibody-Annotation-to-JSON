@@ -55,11 +55,17 @@ class AntibodyToJSON:
         key, value = record.split(":", 1)
 
         if "[" in key:
-            name, region = key.split("[")
+            name_key, region = key.split("[")
             region = region[:-1]
             name = value.split(",")[0]
             gene = value.split(" ")[-1][1:-1]
-            antigen_data = [{"Region": region, "Name": name, "Gene": gene}]
+            if "Antigen" not in self.antibody_ann_dict:
+                antigen_data = [{"Region": region, "Name": name, "Gene": gene}]
+                self.antibody_ann_dict[name_key] = antigen_data
+            else:
+                antigen_data = {"Region": region, "Name": name, "Gene": gene}
+                self.antibody_ann_dict[name_key].append(antigen_data)
+
             # region = [int(num) for num in region[:-1].split(",")]
             # print(f"Name: {name}, Region: {region}")
             # tuple_key = (name, tuple(region))
@@ -68,15 +74,15 @@ class AntibodyToJSON:
         else:
             self.antibody_ann_dict[key] = " ".join(value.split(" ")[:-1]).strip()
 
-        self.antibody_ann_dict[key + "-Gene"] = value.split(" ")[-1][1:-1]
+        # self.antibody_ann_dict[key + "-Gene"] = value.split(" ")[-1][1:-1]
 
     def note_record(self, record):
         key, value = record.split(":", 1)
 
         if key != "Note":
-            note_range = key.replace("Note", "")
+            note_range = key[5:-1]
             # print(f"Note range: {note_range}")
-            self.antibody_ann_dict[self.old_key + note_range + "-Note"] = value.strip()
+            # self.antibody_ann_dict[self.old_key + note_range + "-Note"] = value.strip()
         else:
             self.antibody_ann_dict[self.old_key + "-" + key] = value.strip()
         # for item in self.antibody_ann_dict:
