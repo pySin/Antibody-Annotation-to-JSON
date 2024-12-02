@@ -93,8 +93,9 @@ class AntibodyToJSON:
                 self.methods["Antigen-Note"](key, value)
             else:
                 note_instance = int(key.split("[")[1][:-1])
-                note_index = (next, (ins for ins in self.antibody_ann_dict[self.old_key]
-                                     if note_instance in ins["Instance"]), None)
+                note_index = [self.antibody_ann_dict[self.old_key].index(inst)
+                              for inst in self.antibody_ann_dict[self.old_key]
+                              if note_instance in inst["Instance"]][0]
                 self.antibody_ann_dict[self.old_key][note_index]["Note"] = value.strip()
         else:
             self.antibody_ann_dict[self.old_key + "-" + key] = value.strip()
@@ -123,9 +124,9 @@ class AntibodyToJSON:
         elif "-" in instance:
             instance = instance.split("-")
 
-        print(f"Outside all: {instance}")
+        # print(f"Outside all: {instance}")
         if all(item.isdigit() for item in instance):
-            print(f"In all instances: {instance}")
+            # print(f"In all instances: {instance}")
             instance = [int(num) for num in instance]
 
         if name_key not in self.antibody_ann_dict:
