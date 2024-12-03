@@ -147,10 +147,22 @@ class AntibodyToJSON:
     def heavy_chain_record(self, record):
         capital_letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         chain_sequence = ""
+
         value = record.split(":")[1].strip()
         for symbol in value:
             chain_sequence += symbol if symbol in capital_letters else ""
-        self.antibody_ann_dict["Heavy Chain"] = chain_sequence
+
+        key = record.split(":")[0]
+        if "[" in key:
+            heavy_chain_instances = key[key.index("[") + 1:-1]
+            if "-" in heavy_chain_instances:
+                heavy_chain_instances = [int(instance) for instance in heavy_chain_instances.split("-")]
+            else:
+                heavy_chain_instances = [int(instance) for instance in heavy_chain_instances.split(",")]
+            self.antibody_ann_dict["Heavy Chain"] = [{"Instance": heavy_chain_instances,
+                                                      "Sequence": chain_sequence}]
+        else:
+            self.antibody_ann_dict["Heavy Chain"] = chain_sequence
 
     def light_chain_record(self, record):
         capital_letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -158,7 +170,18 @@ class AntibodyToJSON:
         value = record.split(":")[1].strip()
         for symbol in value:
             chain_sequence += symbol if symbol in capital_letters else ""
-        self.antibody_ann_dict["Light Chain"] = chain_sequence
+
+        key = record.split(":")[0]
+        if "[" in key:
+            light_chain_instances = key[key.index("[") + 1:-1]
+            if "-" in light_chain_instances:
+                light_chain_instances = [int(instance) for instance in light_chain_instances.split("-")]
+            else:
+                light_chain_instances = [int(instance) for instance in light_chain_instances.split(",")]
+            self.antibody_ann_dict["Light Chain"] = [{"Instance": light_chain_instances,
+                                                      "Sequence": chain_sequence}]
+        else:
+            self.antibody_ann_dict["Light Chain"] = chain_sequence
 
     def chain_record(self, record):
         capital_letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -166,7 +189,18 @@ class AntibodyToJSON:
         value = record.split(":")[1].strip()
         for symbol in value:
             chain_sequence += symbol if symbol in capital_letters else ""
-        self.antibody_ann_dict["Chain"] = chain_sequence
+
+        key = record.split(":")[0]
+        if "[" in key:
+            chain_instances = key[key.index("[") + 1:-1]
+            if "-" in chain_instances:
+                chain_instances = [int(instance) for instance in chain_instances.split("-")]
+            else:
+                chain_instances = [int(instance) for instance in chain_instances.split(",")]
+            self.antibody_ann_dict["Chain"] = [{"Instance": chain_instances,
+                                                "Sequence": chain_sequence}]
+        else:
+            self.antibody_ann_dict["Chain"] = chain_sequence
 
     def normal_record(self, record):
         # print(f"Split Result: {record}")
