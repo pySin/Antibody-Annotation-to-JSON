@@ -46,9 +46,9 @@ class AntibodyToJSON:
                 self.methods["Note"](record)
                 continue
 
-            # if record.startswith("CDR"):
-            #     self.methods["CDR"](record)
-            #     continue
+            if record.startswith("CDR"):
+                self.methods["CDR"](record)
+                continue
 
             key = record.split(":")[0]
             key = key[:key.index("[")] if "[" in key else key
@@ -137,12 +137,39 @@ class AntibodyToJSON:
             self.antibody_ann_dict[name_key].append(data)
 
     def cdr_record(self, record):
+        # key, value = record.split(":")
+        # value = value.strip()
+        # sequence = value.split(" ")[0]
+        # residue = value.split(" ")[1][1:-1]
+        # self.antibody_ann_dict[key] = sequence
+        # self.antibody_ann_dict[key + "-Range"] = residue
         key, value = record.split(":")
-        value = value.strip()
-        sequence = value.split(" ")[0]
-        residue = value.split(" ")[1][1:-1]
-        self.antibody_ann_dict[key] = sequence
-        self.antibody_ann_dict[key + "-Range"] = residue
+        # value = value.strip().split(" ") if " " in value else value.strip()
+        sequence = value.strip().split(" ")[0].strip()
+        residue = value.strip().split(" ")[1][1:-1]
+
+        if "]" not in key:
+            self.antibody_ann_dict[key] = [{"Sequence": sequence, "Range": residue}]
+            return None
+
+        name_key, instance = key.split("[")
+        instance = instance[:-1].strip()
+        if "," in instance:
+            instance = instance.split(",")
+        elif "-" in instance:
+            instance = instance.split("-")
+
+        # print(f"Outside all: {instance}")
+        if all(item.isdigit() for item in instance):
+            # print(f"In all instances: {instance}")
+            instance = [int(num) for num in instance]
+
+        if name_key not in self.antibody_ann_dict:
+            data = [{"Instance": instance, "Sequence": sequence, "Range": residue}]
+            self.antibody_ann_dict[name_key] = data
+        else:
+            data = {"Instance": instance, "Sequence": sequence, "Range": residue}
+            self.antibody_ann_dict[name_key].append(data)
 
     def heavy_chain_record(self, record):
         capital_letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
