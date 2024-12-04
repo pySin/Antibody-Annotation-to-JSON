@@ -113,6 +113,13 @@ class AntibodyToJSON:
                     # print(f"Regions equal.")
                     self.antibody_ann_dict[self.old_key][i]["Note"] = value.strip()
 
+    def instance_note(self, key, value):
+        note_instance = int(key.split("[")[1][:-1])
+        note_index = [self.antibody_ann_dict[self.old_key].index(inst)
+                      for inst in self.antibody_ann_dict[self.old_key]
+                      if note_instance in inst["Instance"]][0]
+        self.antibody_ann_dict[self.old_key][note_index]["Note"] = value.strip()
+
     def any_instance_record(self, record):
         key, value = record.split(":")
         value = value.strip().split(" ") if " " in value else value.strip()
