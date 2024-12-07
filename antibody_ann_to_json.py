@@ -19,7 +19,8 @@ class AntibodyToJSON:
             "CDR": self.cdr_record,
             "Heavy Chain": self.heavy_chain_record,
             "Light Chain": self.light_chain_record,
-            "Chain": self.chain_record
+            "Chain": self.chain_record,
+            "Domains": self.domains_record
         }
 
     def read_devide_records(self, filename):
@@ -86,6 +87,14 @@ class AntibodyToJSON:
 
         # self.antibody_ann_dict[key + "-Gene"] = value.split(" ")[-1][1:-1]
 
+    def domains_record(self, record):
+        value = record.split(":", 1)[1].strip()
+
+        if "Domains" not in self.antibody_ann_dict:
+            self.antibody_ann_dict["Domains"] = ["dummy", value]
+        else:
+            self.antibody_ann_dict["Domains"].append(value)
+
     def note_record(self, record):
         key, value = record.split(":", 1)
 
@@ -125,7 +134,12 @@ class AntibodyToJSON:
 
     def any_instance_record(self, record):
         key, value = record.split(":")
-        value = value.strip().split(" ") if " " in value else value.strip()
+        # value = value.strip().split(" ") if " " in value else value.strip()
+        value = value.strip()[:-1]
+        if any(v for v in value if v not in "1234567890 ;"):
+            pass
+        else:
+            value = list(map(int, value.split(" ")))
 
         name_key, instance = key.split("[")
         instance = instance[:-1].strip()
@@ -140,10 +154,10 @@ class AntibodyToJSON:
             instance = [int(num) for num in instance]
 
         if name_key not in self.antibody_ann_dict:
-            data = [{"Instance": instance, name_key: value}]
+            data = [{"Instance": instance, "Values": value}]
             self.antibody_ann_dict[name_key] = data
         else:
-            data = {"Instance": instance, name_key: value}
+            data = {"Instance": instance, "Values": value}
             self.antibody_ann_dict[name_key].append(data)
 
     def cdr_record(self, record):
