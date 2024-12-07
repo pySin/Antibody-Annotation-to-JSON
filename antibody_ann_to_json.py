@@ -39,29 +39,39 @@ class AntibodyToJSON:
             return records
 
     def single_file_transfer(self, filename):
+        key_parts = ["Note", "CDR"]
+        is_key_part_found = False
 
         # Produce JSON file from .txt annotation file
         current_records = self.read_devide_records(filename)
         for record in current_records:
 
-            if record.startswith("Note"):
-                self.methods["Note"](record)
-                continue
-
-            if record.startswith("CDR"):
-                self.methods["CDR"](record)
-                continue
+            # if record.startswith("Note"):
+            #     self.methods["Note"](record)
+            #     continue
+            #
+            # if record.startswith("CDR"):
+            #     self.methods["CDR"](record)
+            #     continue
 
             key = record.split(":")[0]
             key = key[:key.index("[")] if "[" in key else key
+
+            for k_part in key_parts:
+                if k_part in key:
+                    self.methods[k_part](record)
+                    is_key_part_found = True
+                    break
+
+            if is_key_part_found:
+                is_key_part_found = False
+                continue
 
             if key in self.methods:
                 self.methods[key](record)
             else:
                 self.normal_record(record)
             self.old_key = key
-
-        # print(f"Full Dict: {self.antibody_ann_dict}")
 
         filename = filename.split("/")[1]
         with open(f"{filename.split('.')[0]}.json", "w") as jf:
@@ -135,7 +145,7 @@ class AntibodyToJSON:
     def any_instance_record(self, record):
         key, value = record.split(":")
         # value = value.strip().split(" ") if " " in value else value.strip()
-        value = value.strip()[:-1]
+        value = value.strip()  # [:-1]
         if any(v for v in value if v not in "1234567890 ;"):
             pass
         else:
