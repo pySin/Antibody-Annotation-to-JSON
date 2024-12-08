@@ -39,7 +39,7 @@ class AntibodyToJSON:
             return records
 
     def single_file_transfer(self, filename):
-        key_parts = ["Note", "CDR"]
+        key_parts = ["Note", "CDR"]  # Next: Range
         is_key_part_found = False
 
         # Produce JSON file from .txt annotation file
@@ -95,7 +95,10 @@ class AntibodyToJSON:
         else:
             self.antibody_ann_dict[key] = " ".join(value.split(" ")[:-1]).strip()
 
-        # self.antibody_ann_dict[key + "-Gene"] = value.split(" ")[-1][1:-1]
+    def range_record(self, record):
+        key, value = record.split(":", 1)
+        instance = key.split("[")
+
 
     def domains_record(self, record):
         value = record.split(":", 1)[1].strip()
