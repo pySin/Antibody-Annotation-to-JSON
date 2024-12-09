@@ -214,8 +214,7 @@ class AntibodyToJSON:
     def mutation_h_record(self, record):
         key, value = record.split(":", 1)
         instance = int(key.split("[")[1][:-1])
-        mutations = value.split("(", 1)[0].strip().split(" ")  # Produce list like this:
-        #  ["A507P", "P508A", "E509P", "L510P", "L511V", "G512A"]
+        mutations = value.split("(", 1)[0].strip().split(" ")
         reason = value.split("(", 1)[1][:-2]
         mutations_reasons = [{"Mutation": m, "Reason": reason} for m in mutations]
 
