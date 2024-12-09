@@ -20,7 +20,9 @@ class AntibodyToJSON:
             "Heavy Chain": self.heavy_chain_record,
             "Light Chain": self.light_chain_record,
             "Chain": self.chain_record,
-            "Domains": self.domains_record
+            "Domains": self.domains_record,
+            "Range": self.range_record,
+            "MutationH": self.mutation_h_record
         }
 
     def read_devide_records(self, filename):
@@ -39,7 +41,7 @@ class AntibodyToJSON:
             return records
 
     def single_file_transfer(self, filename):
-        key_parts = ["Note", "CDR"]  # Next: Range
+        key_parts = ["Note", "CDR", "Range"]  # Next:
         is_key_part_found = False
 
         # Produce JSON file from .txt annotation file
@@ -97,8 +99,18 @@ class AntibodyToJSON:
 
     def range_record(self, record):
         key, value = record.split(":", 1)
-        instance = key.split("[")
+        instance = int(key.split("[")[1][:-1])
+        key = key.split("[")[0]
+        start, end = value.strip().split(" ", 1)[0].split("-")
 
+        mutations = value.split("(", 1)[1][:-2].split(" ") if "(" in value else "NONE"
+        data = {"Instance": [instance], "Start": int(start), "End": int(end), "Mutations": mutations}
+
+        if key in self.antibody_ann_dict:
+            self.antibody_ann_dict[key].append(data)
+        else:
+            self.antibody_ann_dict[key] = [{"Instance": [instance], "Start": int(start), "End": int(end),
+                                            "Mutations": mutations}]
 
     def domains_record(self, record):
         value = record.split(":", 1)[1].strip()
@@ -174,14 +186,7 @@ class AntibodyToJSON:
             self.antibody_ann_dict[name_key].append(data)
 
     def cdr_record(self, record):
-        # key, value = record.split(":")
-        # value = value.strip()
-        # sequence = value.split(" ")[0]
-        # residue = value.split(" ")[1][1:-1]
-        # self.antibody_ann_dict[key] = sequence
-        # self.antibody_ann_dict[key + "-Range"] = residue
         key, value = record.split(":")
-        # value = value.strip().split(" ") if " " in value else value.strip()
         sequence = value.strip().split(" ")[0].strip()
         residue = value.strip().split(" ")[1][1:-1]
 
@@ -196,9 +201,7 @@ class AntibodyToJSON:
         elif "-" in instance:
             instance = instance.split("-")
 
-        # print(f"Outside all: {instance}")
         if all(item.isdigit() for item in instance):
-            # print(f"In all instances: {instance}")
             instance = [int(num) for num in instance]
 
         if name_key not in self.antibody_ann_dict:
@@ -207,6 +210,30 @@ class AntibodyToJSON:
         else:
             data = {"Instance": instance, "Sequence": sequence, "Range": residue}
             self.antibody_ann_dict[name_key].append(data)
+
+    def mutation_h_record(self, record):
+        key, value = record.split(":", 1)
+        instance = int(key.split("[")[1][:-1])
+        mutations = value.split("(", 1)[0].strip().split(" ")  # Produce list like this:
+        #  ["A507P", "P508A", "E509P", "L510P", "L511V", "G512A"]
+        reason = value.split("(", 1)[1][:-2]
+        mutations_reasons = [{"Mutation": m, "Reason": reason} for m in mutations]
+
+        if "MutationH" not in self.antibody_ann_dict:
+            self.antibody_ann_dict["MutationH"] = [{"Instance": [instance],
+                                                    "Mutations": mutations_reasons}]
+        else:
+            for i in range(len(self.antibody_ann_dict["MutationH"])):
+                if self.antibody_ann_dict["MutationH"][i]["Instance"] == [instance]:
+                    for current_reason in mutations_reasons:
+                        self.antibody_ann_dict["MutationH"][i]["Mutations"].append(current_reason)
+                    return None
+            self.antibody_ann_dict["MutationH"].append({"Instance": [instance],
+                                                        "Mutations": mutations_reasons})
+
+
+
+
 
     def heavy_chain_record(self, record):
         capital_letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -267,11 +294,9 @@ class AntibodyToJSON:
             self.antibody_ann_dict["Chain"] = chain_sequence
 
     def normal_record(self, record):
-        # print(f"Split Result: {record}")
         key, value = record.split(":", 1)
         if "[" in key:
             self.any_instance_record(record)
-            # key = key.split("[")[0]
         else:
             value = value.strip()
             self.antibody_ann_dict[key] = value
