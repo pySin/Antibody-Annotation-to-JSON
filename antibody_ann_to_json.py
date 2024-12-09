@@ -266,6 +266,8 @@ class AntibodyToJSON:
             self.antibody_ann_dict["MutationL"].append({"Instance": [instance],
                                                         "Mutations": mutations_reasons})
 
+    def heavy_potential_n_glycos(self, record):
+        pass
 
 
     def heavy_chain_record(self, record):
