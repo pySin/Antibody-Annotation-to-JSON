@@ -16,6 +16,7 @@ class AntibodyToJSON:
             "Note": self.note_record,
             "Antigen-Note": self.antigen_note,
             "Instance_Note": self.instance_note,
+            "Multiple_Instance_Note": self.multiple_instance_note,
             "CDR": self.cdr_record,
             "Heavy Chain": self.heavy_chain_record,
             "Light Chain": self.light_chain_record,
@@ -152,11 +153,26 @@ class AntibodyToJSON:
                     self.antibody_ann_dict[self.old_key][i]["Note"] = value.strip()
 
     def instance_note(self, key, value):
-        note_instance = int(key.split("[")[1][:-1])
+        note_instance = key.split("[")[1][:-1]
+        if "," in note_instance:
+            self.methods["Multiple_Instance_Note"](key, value)
+            return None
+
+        note_instance = int(note_instance)
         note_index = [self.antibody_ann_dict[self.old_key].index(inst)
                       for inst in self.antibody_ann_dict[self.old_key]
                       if note_instance in inst["Instance"]][0]
         self.antibody_ann_dict[self.old_key][note_index]["Note"] = value.strip()
+
+    def multiple_instance_note(self, key, value):
+        note_instances = list(map(int, key.split("[")[1][:-1].split(",")))
+
+        if self.old_key + "_Instances_Note" not in self.antibody_ann_dict:
+            self.antibody_ann_dict[self.old_key + "_Instances_Note"] = [{"Instance": note_instances,
+                                                                         "Note": value.strip()}]
+        else:
+            self.antibody_ann_dict[self.old_key + "_Instances_Note"].append({"Instance": note_instances,
+                                                                             "Note": value.strip()})
 
     def any_instance_record(self, record):
         key, value = record.split(":")
