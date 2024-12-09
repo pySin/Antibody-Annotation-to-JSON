@@ -22,7 +22,8 @@ class AntibodyToJSON:
             "Chain": self.chain_record,
             "Domains": self.domains_record,
             "Range": self.range_record,
-            "MutationH": self.mutation_h_record
+            "MutationH": self.mutation_h_record,
+            "MutationL": self.mutation_l_record
         }
 
     def read_devide_records(self, filename):
@@ -230,7 +231,24 @@ class AntibodyToJSON:
             self.antibody_ann_dict["MutationH"].append({"Instance": [instance],
                                                         "Mutations": mutations_reasons})
 
+    def mutation_l_record(self, record):
+        key, value = record.split(":", 1)
+        instance = int(key.split("[")[1][:-1])
+        mutations = value.split("(", 1)[0].strip().split(" ")
+        reason = value.split("(", 1)[1][:-2]
+        mutations_reasons = [{"Mutation": m, "Reason": reason} for m in mutations]
 
+        if "MutationL" not in self.antibody_ann_dict:
+            self.antibody_ann_dict["MutationL"] = [{"Instance": [instance],
+                                                    "Mutations": mutations_reasons}]
+        else:
+            for i in range(len(self.antibody_ann_dict["MutationL"])):
+                if self.antibody_ann_dict["MutationL"][i]["Instance"] == [instance]:
+                    for current_reason in mutations_reasons:
+                        self.antibody_ann_dict["MutationL"][i]["Mutations"].append(current_reason)
+                    return None
+            self.antibody_ann_dict["MutationL"].append({"Instance": [instance],
+                                                        "Mutations": mutations_reasons})
 
 
 
