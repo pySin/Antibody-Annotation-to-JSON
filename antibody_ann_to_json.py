@@ -26,7 +26,9 @@ class AntibodyToJSON:
             "MutationH": self.mutation_h_record,
             "MutationL": self.mutation_l_record,
             "HeavyPotentialNGlycos": self.heavy_potential_n_glycos_record,
-            "HeavyConfirmedNGlycos": self.heavy_confirmed_n_glycos_record
+            "HeavyConfirmedNGlycos": self.heavy_confirmed_n_glycos_record,
+            "LightPotentialNGlycos": self.light_potential_n_glycos_record,
+            "LightConfirmedNGlycos": self.light_potential_n_glycos_record
         }
 
     @staticmethod
