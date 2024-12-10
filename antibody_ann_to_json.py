@@ -308,18 +308,40 @@ class AntibodyToJSON:
         value = record.split(":", 1)[1].strip()
 
         if "LightNGlycos" not in self.antibody_ann_dict:
-            self.antibody_ann_dict["HeavyNGlycos"] = [{"Instance": [instance], "Potential": [value]}]
+            self.antibody_ann_dict["LightNGlycos"] = [{"Instance": [instance], "Potential": [value]}]
         else:
-            for i in range(len(self.antibody_ann_dict["HeavyNGlycos"])):
-                if self.antibody_ann_dict["HeavyNGlycos"][i]["Instance"][0] == instance:
-                    if "Potential" in self.antibody_ann_dict["HeavyNGlycos"][i]:
+            for i in range(len(self.antibody_ann_dict["LightNGlycos"])):
+                if self.antibody_ann_dict["LightNGlycos"][i]["Instance"][0] == instance:
+                    if "Potential" in self.antibody_ann_dict["LightNGlycos"][i]:
                         return None
                     else:
-                        self.antibody_ann_dict["HeavyNGlycos"][i]["Potential"] = [value]
+                        self.antibody_ann_dict["LightNGlycos"][i]["Potential"] = [value]
                         return None
 
-            self.antibody_ann_dict["HeavyNGlycos"].append({"Instance": [instance],
+            self.antibody_ann_dict["LightNGlycos"].append({"Instance": [instance],
                                                            "Potential": [value]})
+
+    def light_confirmed_n_glycos_record(self, record):
+        instance = int(record.split(":")[0].split("[", 1)[1][:-1])
+        # confirmed_or_potential = "Confirmed" if "Confirmed" in record.split("[", 1)[0] else "Potential"
+        value = record.split(":", 1)[1].strip()
+
+        if "LightNGlycos" not in self.antibody_ann_dict:
+            self.antibody_ann_dict["LightNGlycos"] = [{"Instance": [instance], "Confirmed": [value]}]
+        else:
+            for i in range(len(self.antibody_ann_dict["LightNGlycos"])):
+                print(f'Heavy Instance: {self.antibody_ann_dict["LightNGlycos"][i]["Instance"]}')
+                if self.antibody_ann_dict["LightNGlycos"][i]["Instance"][0] == instance:
+                    print(f'Instances equal: {instance} = '
+                          f'{self.antibody_ann_dict["LightNGlycos"][i]["Instance"]}')
+                    if "Confirmed" in self.antibody_ann_dict["LightNGlycos"][i]:
+                        return None
+                    else:
+                        self.antibody_ann_dict["LightNGlycos"][i]["Confirmed"] = [value]
+                        return None
+
+            self.antibody_ann_dict["LightNGlycos"].append({"Instance": [instance],
+                                                           "Confirmed": [value]})
 
     def heavy_chain_record(self, record):
         capital_letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
