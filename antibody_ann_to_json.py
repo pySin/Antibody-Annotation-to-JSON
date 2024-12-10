@@ -28,7 +28,9 @@ class AntibodyToJSON:
             "HeavyPotentialNGlycos": self.heavy_potential_n_glycos_record,
             "HeavyConfirmedNGlycos": self.heavy_confirmed_n_glycos_record,
             "LightPotentialNGlycos": self.light_potential_n_glycos_record,
-            "LightConfirmedNGlycos": self.light_confirmed_n_glycos_record
+            "LightConfirmedNGlycos": self.light_confirmed_n_glycos_record,
+            "LVGermline": self.lv_germline,
+            "ConfirmedPTM": self.confirmed_ptm
         }
 
     @staticmethod
@@ -48,7 +50,7 @@ class AntibodyToJSON:
             return records
 
     def single_file_transfer(self, filename):
-        key_parts = ["Note", "CDR", "Range"]  # Next:
+        key_parts = ["Note", "CDR", "Range", "ConfirmedPTM"]  # Next:
         is_key_part_found = False
 
         # Produce JSON file from .txt annotation file
@@ -202,7 +204,7 @@ class AntibodyToJSON:
     def cdr_record(self, record):
         key, value = record.split(":")
         sequence = value.strip().split(" ")[0].strip()
-        residue = value.strip().split(" ")[1][1:-1]
+        residue = value.strip().split(" ")[1][1:-1].split("-")
 
         if "]" not in key:
             self.antibody_ann_dict[key] = [{"Sequence": sequence, "Range": residue}]
@@ -291,10 +293,7 @@ class AntibodyToJSON:
             self.antibody_ann_dict["HeavyNGlycos"] = [{"Instance": [instance], "Confirmed": [value]}]
         else:
             for i in range(len(self.antibody_ann_dict["HeavyNGlycos"])):
-                print(f'Heavy Instance: {self.antibody_ann_dict["HeavyNGlycos"][i]["Instance"]}')
                 if self.antibody_ann_dict["HeavyNGlycos"][i]["Instance"][0] == instance:
-                    print(f'Instances equal: {instance} = '
-                          f'{self.antibody_ann_dict["HeavyNGlycos"][i]["Instance"]}')
                     if "Confirmed" in self.antibody_ann_dict["HeavyNGlycos"][i]:
                         return None
                     else:
@@ -332,10 +331,7 @@ class AntibodyToJSON:
             self.antibody_ann_dict["LightNGlycos"] = [{"Instance": [instance], "Confirmed": [value]}]
         else:
             for i in range(len(self.antibody_ann_dict["LightNGlycos"])):
-                print(f'Heavy Instance: {self.antibody_ann_dict["LightNGlycos"][i]["Instance"]}')
                 if self.antibody_ann_dict["LightNGlycos"][i]["Instance"][0] == instance:
-                    print(f'Instances equal: {instance} = '
-                          f'{self.antibody_ann_dict["LightNGlycos"][i]["Instance"]}')
                     if "Confirmed" in self.antibody_ann_dict["LightNGlycos"][i]:
                         return None
                     else:
@@ -344,6 +340,33 @@ class AntibodyToJSON:
 
             self.antibody_ann_dict["LightNGlycos"].append({"Instance": [instance],
                                                            "Confirmed": [value]})
+
+    def lv_germline(self, record):  # LVGermline[2]: Homo sapiens IGKV3-11*01;
+        key, value = record.split(":", 1)
+        instance = int(key.split("[", 1)[1][:-1])
+        key = key.split("[")[0]
+        species, gene_id = value.strip().rsplit(" ", 1)
+
+        if key not in self.antibody_ann_dict:
+            self.antibody_ann_dict[key] = [{"Instance": [instance], "Species": species, "GeneID": gene_id}]
+        else:
+            self.antibody_ann_dict[key].append({"Instance": [instance],
+                                                "Species": species, "GeneID": gene_id})
+
+    def confirmed_ptm(self, record):  # LightConfirmedPTM[2]: glycation 148 182 189 (rare);
+        key, value = record.split(":", 1)
+        instance = list(map(int, (key.split("[", 1)[1][:-1].split(","))))
+        key = key.split("[")[0]
+        # print(f'm_type:{value.strip().split(" ")[0]}')
+        m_type = value.strip().split(" ")[0]
+        frequency = value.strip().split(" ")[-1][1:-1] if "(" in value else ""
+        position = [int(num) for num in value.strip().split(" ") if num.isnumeric()]
+        if key not in self.antibody_ann_dict:
+            self.antibody_ann_dict[key] = [{"Instance": instance, "Type": m_type, "Position": position,
+                                            "Frequency": frequency}]
+        else:
+            self.antibody_ann_dict[key].append({"Instance": instance, "Type": m_type,
+                                                "Position": position, "Frequency": frequency})
 
     def heavy_chain_record(self, record):
         capital_letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
