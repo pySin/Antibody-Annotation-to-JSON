@@ -204,10 +204,10 @@ class AntibodyToJSON:
     def cdr_record(self, record):
         key, value = record.split(":")
         sequence = value.strip().split(" ")[0].strip()
-        residue = value.strip().split(" ")[1][1:-1].split("-")
+        start, end = list(map(int, value.strip().split(" ")[1][1:-1].split("-")))
 
         if "]" not in key:
-            self.antibody_ann_dict[key] = [{"Sequence": sequence, "Range": residue}]
+            self.antibody_ann_dict[key] = [{"Sequence": sequence, "Start": start, "End": end}]
             return None
 
         name_key, instance = key.split("[")
@@ -221,10 +221,10 @@ class AntibodyToJSON:
             instance = [int(num) for num in instance]
 
         if name_key not in self.antibody_ann_dict:
-            data = [{"Instance": instance, "Sequence": sequence, "Range": residue}]
+            data = [{"Instance": instance, "Sequence": sequence, "Start": start, "End": end}]
             self.antibody_ann_dict[name_key] = data
         else:
-            data = {"Instance": instance, "Sequence": sequence, "Range": residue}
+            data = {"Instance": instance, "Sequence": sequence, "Start": start, "End": end}
             self.antibody_ann_dict[name_key].append(data)
 
     def mutation_h_record(self, record):
@@ -361,12 +361,22 @@ class AntibodyToJSON:
         m_type = value.strip().split(" ")[0]
         frequency = value.strip().split(" ")[-1][1:-1] if "(" in value else ""
         position = [int(num) for num in value.strip().split(" ") if num.isnumeric()]
+
         if key not in self.antibody_ann_dict:
-            self.antibody_ann_dict[key] = [{"Instance": instance, "Type": m_type, "Position": position,
-                                            "Frequency": frequency}]
+            self.antibody_ann_dict[key] = [{"Instance": instance, "Modifications":
+                                           [{"Type": m_type, "Position": position, "Frequency": frequency}]}]
         else:
-            self.antibody_ann_dict[key].append({"Instance": instance, "Type": m_type,
-                                                "Position": position, "Frequency": frequency})
+            for i in range(len(self.antibody_ann_dict[key])):
+                if self.antibody_ann_dict[key][i]["Instance"] == instance:
+                    self.antibody_ann_dict[key][i]["Modifications"].append({"Type": m_type,
+                                                                            "Position": position,
+                                                                            "Frequency": frequency})
+                    return None
+            self.antibody_ann_dict[key].append({"Instance": instance, "Modifications": [{"Type": m_type,
+                                                "Position": position, "Frequency": frequency}]})
+
+    def disulfides_inter(self):
+        pass
 
     def heavy_chain_record(self, record):
         capital_letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
