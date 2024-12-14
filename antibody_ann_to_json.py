@@ -30,7 +30,8 @@ class AntibodyToJSON:
             "LightPotentialNGlycos": self.light_potential_n_glycos_record,
             "LightConfirmedNGlycos": self.light_confirmed_n_glycos_record,
             "LVGermline": self.lv_germline,
-            "ConfirmedPTM": self.confirmed_ptm
+            "ConfirmedPTM": self.confirmed_ptm,
+            "DisulfidesInter": self.disulfides_inter
         }
 
     @staticmethod
@@ -50,7 +51,7 @@ class AntibodyToJSON:
             return records
 
     def single_file_transfer(self, filename):
-        key_parts = ["Note", "CDR", "Range", "ConfirmedPTM"]  # Next:
+        key_parts = ["Note", "CDR", "Range", "ConfirmedPTM", "DisulfidesInter"]  # Next:
         is_key_part_found = False
 
         # Produce JSON file from .txt annotation file
@@ -375,7 +376,16 @@ class AntibodyToJSON:
             self.antibody_ann_dict[key].append({"Instance": instance, "Modifications": [{"Type": m_type,
                                                 "Position": position, "Frequency": frequency}]})
 
-    def disulfides_inter(self):
+    def disulfides_inter(self, record):  # DisulfidesInterH1H2[2,5]: 222-230 225-233 350-353;
+        key, value = record.split(":", 1)
+        instance_a, instance_b = list(map(int, key.split("[")[1][:-1].split(",")))
+        value = value.strip().split(" ")
+        connections = [{"A": int(c.split("-")[0]), "B": int(c.split("-")[1])} for c in value]
+        key = key.split("[")[0]
+
+        self.antibody_ann_dict[key] = [{"InstanceA": instance_a, "InstanceB": instance_b, "Bonds": connections}]
+
+    def linker(self, record):  # Linker[1,2]: 44-60;
         pass
 
     def heavy_chain_record(self, record):
