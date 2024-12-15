@@ -430,10 +430,10 @@ class AntibodyToJSON:
                 light_chain_instances = [int(instance) for instance in light_chain_instances.split("-")]
             else:
                 light_chain_instances = [int(instance) for instance in light_chain_instances.split(",")]
-            self.antibody_ann_dict["Light Chain"] = [{"Instance": light_chain_instances,
+            self.antibody_ann_dict["LightChain"] = [{"Instance": light_chain_instances,
                                                       "Sequence": chain_sequence}]
         else:
-            self.antibody_ann_dict["Light Chain"] = chain_sequence
+            self.antibody_ann_dict["LightChain"] = chain_sequence
 
     def chain_record(self, record):
         capital_letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
