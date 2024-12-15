@@ -31,7 +31,8 @@ class AntibodyToJSON:
             "LightConfirmedNGlycos": self.light_confirmed_n_glycos_record,
             "LVGermline": self.lv_germline,
             "ConfirmedPTM": self.confirmed_ptm,
-            "DisulfidesInter": self.disulfides_inter
+            "DisulfidesInter": self.disulfides_inter,
+            "Linker": self.linker
         }
 
     @staticmethod
@@ -386,7 +387,14 @@ class AntibodyToJSON:
         self.antibody_ann_dict[key] = [{"InstanceA": instance_a, "InstanceB": instance_b, "Bonds": connections}]
 
     def linker(self, record):  # Linker[1,2]: 44-60;
-        pass
+        key, value = record.split(":", 1)
+        l_from, l_to = [int(num) for num in key.split("[", 1)[1][:-1].split(",")]
+        start, end = [int(num) for num in value.strip().split("-")]
+
+        if "Linker" in self.antibody_ann_dict:
+            self.antibody_ann_dict["Linker"].append({"From": l_from, "To": l_to, "Start": start, "End": end})
+        else:
+            self.antibody_ann_dict["Linker"] = [{"From": l_from, "To": l_to, "Start": start, "End": end}]
 
     def heavy_chain_record(self, record):
         capital_letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -403,10 +411,10 @@ class AntibodyToJSON:
                 heavy_chain_instances = [int(instance) for instance in heavy_chain_instances.split("-")]
             else:
                 heavy_chain_instances = [int(instance) for instance in heavy_chain_instances.split(",")]
-            self.antibody_ann_dict["Heavy Chain"] = [{"Instance": heavy_chain_instances,
+            self.antibody_ann_dict["HeavyChain"] = [{"Instance": heavy_chain_instances,
                                                       "Sequence": chain_sequence}]
         else:
-            self.antibody_ann_dict["Heavy Chain"] = chain_sequence
+            self.antibody_ann_dict["HeavyChain"] = chain_sequence
 
     def light_chain_record(self, record):
         capital_letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
