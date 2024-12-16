@@ -49,6 +49,11 @@ class AntibodyToJSON:
                 else:
                     records.append(r)
             records = [r for r in records if len(r) > 2]
+            split_first_record = records[0].split("F")
+            split_first_record[1] = "F" + split_first_record[1]
+            records = records[1:]
+            for i in range(len(split_first_record) -1, -1, -1):
+                records.insert(0, split_first_record[i])
             return records
 
     def single_file_transfer(self, filename):
@@ -233,7 +238,7 @@ class AntibodyToJSON:
         key, value = record.split(":", 1)
         instance = int(key.split("[")[1][:-1])
         mutations = value.split("(", 1)[0].strip().split(" ")
-        reason = value.split("(", 1)[1][:-2]
+        reason = value.split("(", 1)[1][:-1]
         mutations_reasons = [{"Mutation": m, "Reason": reason} for m in mutations]
 
         if "MutationH" not in self.antibody_ann_dict:
