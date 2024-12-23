@@ -31,7 +31,8 @@ class AntibodyToJSON:
             "LightConfirmedNGlycos": self.light_confirmed_n_glycos_record,
             "LVGermline": self.lv_germline,
             "ConfirmedPTM": self.confirmed_ptm,
-            "DisulfidesInter": self.disulfides_inter
+            "DisulfidesInter": self.disulfides_inter,
+            "Linker": self.linker
         }
 
     @staticmethod
@@ -48,6 +49,11 @@ class AntibodyToJSON:
                 else:
                     records.append(r)
             records = [r for r in records if len(r) > 2]
+            split_first_record = records[0].split("F")
+            split_first_record[1] = "F" + split_first_record[1]
+            records = records[1:]
+            for i in range(len(split_first_record) -1, -1, -1):
+                records.insert(0, split_first_record[i])
             return records
 
     def single_file_transfer(self, filename):
@@ -204,12 +210,6 @@ class AntibodyToJSON:
 
     def cdr_record(self, record):
         key, value = record.split(":")
-        name_key, instance = key.split("[")
-
-        if name_key == "CDRSource":
-            self.antibody_ann_dict[name_key] = value.strip()[:-1]
-            return None
-
         sequence = value.strip().split(" ")[0].strip()
         start, end = list(map(int, value.strip().split(" ")[1][1:-1].split("-")))
 
@@ -217,6 +217,7 @@ class AntibodyToJSON:
             self.antibody_ann_dict[key] = [{"Sequence": sequence, "Start": start, "End": end}]
             return None
 
+        name_key, instance = key.split("[")
         instance = instance[:-1].strip()
         if "," in instance:
             instance = instance.split(",")
@@ -237,7 +238,7 @@ class AntibodyToJSON:
         key, value = record.split(":", 1)
         instance = int(key.split("[")[1][:-1])
         mutations = value.split("(", 1)[0].strip().split(" ")
-        reason = value.split("(", 1)[1][:-2]
+        reason = value.split("(", 1)[1][:-1]
         mutations_reasons = [{"Mutation": m, "Reason": reason} for m in mutations]
 
         if "MutationH" not in self.antibody_ann_dict:
@@ -390,6 +391,15 @@ class AntibodyToJSON:
 
         self.antibody_ann_dict[key] = [{"InstanceA": instance_a, "InstanceB": instance_b, "Bonds": connections}]
 
+    def linker(self, record):  # Linker[1,2]: 44-60;
+        key, value = record.split(":", 1)
+        l_from, l_to = [int(num) for num in key.split("[", 1)[1][:-1].split(",")]
+        start, end = [int(num) for num in value.strip().split("-")]
+
+        if "Linker" in self.antibody_ann_dict:
+            self.antibody_ann_dict["Linker"].append({"From": l_from, "To": l_to, "Start": start, "End": end})
+        else:
+            self.antibody_ann_dict["Linker"] = [{"From": l_from, "To": l_to, "Start": start, "End": end}]
 
     def heavy_chain_record(self, record):
         capital_letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -406,10 +416,10 @@ class AntibodyToJSON:
                 heavy_chain_instances = [int(instance) for instance in heavy_chain_instances.split("-")]
             else:
                 heavy_chain_instances = [int(instance) for instance in heavy_chain_instances.split(",")]
-            self.antibody_ann_dict["Heavy Chain"] = [{"Instance": heavy_chain_instances,
+            self.antibody_ann_dict["HeavyChain"] = [{"Instance": heavy_chain_instances,
                                                       "Sequence": chain_sequence}]
         else:
-            self.antibody_ann_dict["Heavy Chain"] = chain_sequence
+            self.antibody_ann_dict["HeavyChain"] = chain_sequence
 
     def light_chain_record(self, record):
         capital_letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -425,10 +435,10 @@ class AntibodyToJSON:
                 light_chain_instances = [int(instance) for instance in light_chain_instances.split("-")]
             else:
                 light_chain_instances = [int(instance) for instance in light_chain_instances.split(",")]
-            self.antibody_ann_dict["Light Chain"] = [{"Instance": light_chain_instances,
+            self.antibody_ann_dict["LightChain"] = [{"Instance": light_chain_instances,
                                                       "Sequence": chain_sequence}]
         else:
-            self.antibody_ann_dict["Light Chain"] = chain_sequence
+            self.antibody_ann_dict["LightChain"] = chain_sequence
 
     def chain_record(self, record):
         capital_letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -455,4 +465,4 @@ class AntibodyToJSON:
             self.any_instance_record(record)
         else:
             value = value.strip()
-            self.antibody_ann_dict[key] = value  # Comment 23.12.2024
+            self.antibody_ann_dict[key] = value
