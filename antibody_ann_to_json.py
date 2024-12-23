@@ -30,7 +30,8 @@ class AntibodyToJSON:
             "LightPotentialNGlycos": self.light_potential_n_glycos_record,
             "LightConfirmedNGlycos": self.light_confirmed_n_glycos_record,
             "LVGermline": self.lv_germline,
-            "ConfirmedPTM": self.confirmed_ptm
+            "ConfirmedPTM": self.confirmed_ptm,
+            "DisulfidesInter": self.disulfides_inter
         }
 
     @staticmethod
@@ -50,7 +51,7 @@ class AntibodyToJSON:
             return records
 
     def single_file_transfer(self, filename):
-        key_parts = ["Note", "CDR", "Range", "ConfirmedPTM"]  # Next:
+        key_parts = ["Note", "CDR", "Range", "ConfirmedPTM", "DisulfidesInter"]  # Next:
         is_key_part_found = False
 
         # Produce JSON file from .txt annotation file
@@ -203,6 +204,12 @@ class AntibodyToJSON:
 
     def cdr_record(self, record):
         key, value = record.split(":")
+        name_key, instance = key.split("[")
+
+        if name_key == "CDRSource":
+            self.antibody_ann_dict[name_key] = value.strip()[:-1]
+            return None
+
         sequence = value.strip().split(" ")[0].strip()
         start, end = list(map(int, value.strip().split(" ")[1][1:-1].split("-")))
 
@@ -210,7 +217,6 @@ class AntibodyToJSON:
             self.antibody_ann_dict[key] = [{"Sequence": sequence, "Start": start, "End": end}]
             return None
 
-        name_key, instance = key.split("[")
         instance = instance[:-1].strip()
         if "," in instance:
             instance = instance.split(",")
@@ -375,8 +381,15 @@ class AntibodyToJSON:
             self.antibody_ann_dict[key].append({"Instance": instance, "Modifications": [{"Type": m_type,
                                                 "Position": position, "Frequency": frequency}]})
 
-    def disulfides_inter(self):
-        pass
+    def disulfides_inter(self, record):  # DisulfidesInterH1H2[2,5]: 222-230 225-233 350-353;
+        key, value = record.split(":", 1)
+        instance_a, instance_b = list(map(int, key.split("[")[1][:-1].split(",")))
+        value = value.strip().split(" ")
+        connections = [{"A": int(c.split("-")[0]), "B": int(c.split("-")[1])} for c in value]
+        key = key.split("[")[0]
+
+        self.antibody_ann_dict[key] = [{"InstanceA": instance_a, "InstanceB": instance_b, "Bonds": connections}]
+
 
     def heavy_chain_record(self, record):
         capital_letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -442,4 +455,4 @@ class AntibodyToJSON:
             self.any_instance_record(record)
         else:
             value = value.strip()
-            self.antibody_ann_dict[key] = value
+            self.antibody_ann_dict[key] = value  # Comment 23.12.2024
