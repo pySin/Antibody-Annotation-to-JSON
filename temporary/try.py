@@ -16,3 +16,22 @@
 #
 # star_check(*l_check)
 
+
+# @property functionality
+
+
+class PropTry:
+
+    def __init__(self):
+        self.a = 2
+
+    @property
+    def static_return(self):
+        return [i for i in range(13)]
+
+    def print_property(self):
+        print(self.static_return)
+
+
+pt1 = PropTry()
+pt1.print_property()
