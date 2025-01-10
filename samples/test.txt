@@ -1,0 +1,6 @@
+Request: 12345;
+Antigen: Example Antigen (GeneA);
+CDR: SomeSequence (10-20);
+Heavy Chain[1]: SEQUENCEHERE;
+Light Chain[1]: LIGHTSEQUENCEHERE;
+Note: Example Note;
