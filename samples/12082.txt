@@ -1,0 +1,195 @@
+Request: 12082;
+
+Format: bispecific human monoclonal antibody;
+Note: transgenic mouse with human genes;
+ID: AMG509;
+AbML: VH.a(1:15)-CH1*(2:16){1}-H(3:12){2}-CH2*!(4:13)-CH3*_(5:14)|VH.a(6:17)-CH1(7:18){1}-L(8)-VL.b(9:11)-L(10)-VH.b(11:9)-H(12:3){2}-CH2*!(13:4)-CH3*+(14:5)|VL.a(15:1)-CL(16:2){1}|VL.a(17:6)-CL(18:7){1};
+
+Antigen[1,2]: human Metalloreductase STEAP1, EC:1.16.1.-, Six-transmembrane epithelial antigen of prostate 1 (STEAP1);
+Antigen[3,2]: human Metalloreductase STEAP1, EC:1.16.1.-, Six-transmembrane epithelial antigen of prostate 1 (STEAP1);
+Antigen[4,5]: human T-cell surface glycoprotein CD3 epsilon chain, T-cell surface antigen T3/Leu-4 epsilon chain, CD3e (CD3E);
+
+Note[1,2]: transgenic mouse with human genes;
+Note[3,2]: transgenic mouse with human genes;
+Note[4,5]: transgenic mouse with human genes;
+
+Domains[1]: VH CH1 CH2 CH3;
+Domains[2]: VL CL;
+Domains[3]: VH CH1;
+Domains[4]: VH;
+Domains[5]: VL;
+Domains[6]: CH2 CH3;
+Fusion: 3 4 5 6;
+
+Type[1]: IgG1-kappa;
+HeavyChainClass[1]: Gamma1;
+HeavyChainLength[1]: 450;
+HeavyPotentialNGlycos[1]: NONE;
+HeavyConfirmedNGlycos[1]: NONE;
+HeavyCysPositions[1]: 22 96 148 204 224 230 233 264 295 305 324 370 428;
+HeavyDisulfidesIntra[1]: 22-96 148-204 264-324 295-305 370-428;
+HVGermline[1]: Homo sapiens IGHV1-3*01;
+HJGermline[1]: Homo sapiens IGHJ4*01;
+HCGermline(CH1)[1]: Homo sapiens IGHG1*01;
+HCGermline(CH2,CH3)[1]: Homo sapiens IGHG1*03;
+VHRange[1]: 1-121;
+CH1Range[1]: 122-219 (N212D);
+HingeRange[1]: 220-237;
+CH2Range[1]: 238-343 (A234P P235A E236P L237P L238V G239A S270K R295C Q298E N300G V305C);
+CH3Range[1]: 344-448 (L371D K373S N387D Q421E N424D);
+CHSRange[1]: 449-450;
+MutationH[1]: N212D (change isoelectric point);
+MutationH[1]: A234P P235A E236P L237P L238V G239A (reduce FcGammaR binding, matches IgG2*02);
+MutationH[1]: S270K (reduce FcGammaR and C1q binding);
+MutationH[1]: N300G (remove glycosylation site);
+MutationH[1]: R295C V305C (disulfide);
+MutationH[1]: Q298E (change isoelectric point);
+MutationH[1]: L371D K373S (bispecific formation);
+MutationH[1]: N387D Q421E N424D (change isoelectric point);
+HeavyConfirmedPTM[1]: nterpca 1;
+HeavyConfirmedPTM[1]: oxidation 33 99 (rare);
+HeavyConfirmedPTM[1]: hydroxylation 125 (rare);
+HeavyConfirmedPTM[1]: glycation 417 (rare);
+HeavyConfirmedPTM[1]: cterclip 450;
+CDRKabatH1[1]: TYWIE (31-35);
+CDRKabatH2[1]: EILPGSGQTDFNEKFQG (50-66);
+CDRKabatH3[1]: WGYYGTRGYFNV (99-110);
+
+DisulfidesInterL1H1[2,1]: 213-224;
+
+LightChainClass[2]: kappa;
+LightChainLength[2]: 213;
+LightPotentialNGlycos[2]: NONE;
+LightConfirmedNGlycos[2]: NONE;
+LightCysPositions[2]: 23 87 133 193 213;
+LightDisulfidesIntra[2]: 23-87 133-193;
+LVGermline[2]: Homo sapiens IGKV3-11*01;
+LJGermline[2]: Homo sapiens IGKJ2*01;
+LCGermline[2]: Homo sapiens IGKC*01;
+VLRange[2]: 1-106;
+CLRange[2]: 107-213;
+LightConfirmedPTM[2]: oxidation 32 (rare);
+LightConfirmedPTM[2]: glycation 148 182 189 (rare);
+
+CDRKabatL1[2]: RASSSVSYMH (24-33);
+CDRKabatL2[2]: STSNLAS (49-55);
+CDRKabatL3[2]: QQRRSFPYT (88-96);
+
+DisulfidesInterH1H2[1,6]: 230-503 233-506;
+
+ChainLength[3,4,5,6]: 723;
+
+Type[3,2]: IgG1-kappa;
+HeavyChainClass[3]: Gamma1;
+HeavyPotentialNGlycos[3]: NONE;
+HeavyConfirmedNGlycos[3]: NONE;
+HeavyCysPositions[3]: 22 96 148 204 224;
+HeavyDisulfidesIntra[3]: 22-96 148-204;
+HVGermline[3]: Homo sapiens IGHV1-3*01;
+HJGermline[3]: Homo sapiens IGHJ4*01;
+HCGermline[3]: Homo sapiens IGHG1*01;
+VHRange[3]: 1-121;
+CH1Range[3]: 122-219;
+HingeRange[3]: 220-224;
+Note[3]: Only the Nter 5 residues;
+HeavyConfirmedPTM[3]: nterpca 1;
+HeavyConfirmedPTM[3]: oxidation 33 99 (rare);
+HeavyConfirmedPTM[3]: hydroxylation 125 (rare);
+
+CDRKabatH1[3]: TYWIE (31-35);
+CDRKabatH2[3]: EILPGSGQTDFNEKFQG (50-66);
+CDRKabatH3[3]: WGYYGTRGYFNV (99-110);
+
+Linker[3,4]: 225-234;
+
+Type[4]: Fv-heavy scFv;
+HeavyPotentialNGlycos[4]: NONE;
+HeavyConfirmedNGlycos[4]: NONE;
+HeavyCysPositions[4]: 256 332;
+HeavyDisulfidesIntra[4]: 256-332;
+HVGermline[4]: Homo sapiens IGHV3-73*01;
+HJGermline[4]: Homo sapiens IGHJ4*01;
+VHRange[4]: 235-359;
+HeavyConfirmedPTM[4]: deamidation 337 (rare);
+HeavyConfirmedPTM[4]: isomerization 340 (rare);
+
+CDRKabatH1[4]: TYAMN (265-269);
+CDRKabatH2[4]: RIRSKYNNYATYYADSVKG (284-302);
+CDRKabatH3[4]: HGNFGDSYVSWFAY (335-348);
+
+Linker[4,5]: 360-379;
+ConfirmedPTM[4,5]: hydroxylation 372 377 (partial);
+
+Type[5]: Fv-lambda scFv;
+LightChainClass[5]: lambda;
+LightPotentialNGlycos[5]: NONE;
+LightConfirmedNGlycos[5]: NONE;
+LightCysPositions[5]: 401 469;
+LightDisulfidesIntra[5]: 401-469;
+LVGermline[5]: Homo sapiens IGLV7-46*01;
+LJGermline[5]: Homo sapiens IGLJ3*02;
+VLRange[5]: 380-488;
+CDRKabatL1[5]: GSSTGAVTTSNYAN (402-415);
+CDRKabatL2[5]: GTNKRAP (431-437);
+CDRKabatL3[5]: ALWYSNHWV (470-478);
+
+Linker[5,6]: 489-498;
+
+HeavyChainClass[6]: Gamma1;
+HeavyPotentialNGlycos[6]: NONE;
+HeavyConfirmedNGlycos[6]: NONE;
+HeavyCysPositions[6]: 503 506 537 568 578 597 643 701;
+HeavyDisulfidesIntra[6]: 537-597 568-578 643-701;
+HCGermline[6]: Homo sapiens IGHG1*09;
+HingeRange[6]: 499-506;
+CH2Range[6]: 507-616 (A507P P508A E509P L510P L511V G512A S543K R568C N573G V578C);
+CH3Range[6]: 617-721 (E633Q S640K);
+CHSRange[6]: 722-723;
+MutationH[6]: A507P P508A E509P L510P L511V G512A (reduce FcGammaR binding, matches IgG2*02);
+MutationH[6]: S543K (reduce FcGammaR and C1q binding);
+MutationH[6]: N573G (remove glycosylation site);
+MutationH[6]: R568C V578C (disulfide);
+MutationH[6]: E633Q S640K (bispecific formation);
+HeavyConfirmedPTM[6]: glycation 602 685 690 (rare);
+HeavyConfirmedPTM[6]: cterclip 723;
+
+DisulfidesInterL2H2[2,3]: 213-224;
+
+Heavy Chain[1]:
+QVQLVQSGAE VKKPGASVKV SCKASGYTFS TYWIEWVRQA PGQRLEWMGE  50
+ILPGSGQTDF NEKFQGRVTF TADTSSDTAY MELSSLRSED TAVYYCTRWG 100
+YYGTRGYFNV WGQGTLVTVS SASTKGPSVF PLAPSSKSTS GGTAALGCLV 150
+KDYFPEPVTV SWNSGALTSG VHTFPAVLQS SGLYSLSSVV TVPSSSLGTQ 200
+TYICNVNHKP SDTKVDKKVE PKSCDKTHTC PPCPAPPVAG PSVFLFPPKP 250
+KDTLMISRTP EVTCVVVDVK HEDPEVKFNW YVDGVEVHNA KTKPCEEEYG 300
+STYRCVSVLT VLHQDWLNGK EYKCKVSNKA LPAPIEKTIS KAKGQPREPQ 350
+VYTLPPSREE MTKNQVSLTC DVSGFYPSDI AVEWESDGQP ENNYKTTPPV 400
+LDSDGSFFLY SKLTVDKSRW EQGDVFSCSV MHEALHNHYT QKSLSLSPGK 450
+//
+
+Light Chain[2]:
+EIVLTQSPAT LSLSPGERAT LSCRASSSVS YMHWFQQKPG QAPRLLIYST  50
+SNLASGIPAR FSGSGSGTDY TLTISSLEPE DFAVYYCQQR RSFPYTFGQG 100
+TKLEIKRTVA APSVFIFPPS DEQLKSGTAS VVCLLNNFYP REAKVQWKVD 150
+NALQSGNSQE SVTEQDSKDS TYSLSSTLTL SKADYEKHKV YACEVTHQGL 200
+SSPVTKSFNR GEC                                         213
+//
+
+Chain[3-4-5-6]:
+QVQLVQSGAE VKKPGASVKV SCKASGYTFS TYWIEWVRQA PGQRLEWMGE  50
+ILPGSGQTDF NEKFQGRVTF TADTSSDTAY MELSSLRSED TAVYYCTRWG 100
+YYGTRGYFNV WGQGTLVTVS SASTKGPSVF PLAPSSKSTS GGTAALGCLV 150
+KDYFPEPVTV SWNSGALTSG VHTFPAVLQS SGLYSLSSVV TVPSSSLGTQ 200
+TYICNVNHKP SNTKVDKKVE PKSCGGGGSG GGGSEVQLVE SGGGLVQPGG 250
+SLRLSCAASG FTFSTYAMNW VRQAPGKGLE WVGRIRSKYN NYATYYADSV 300
+KGRFTISRDD SKNTLYLQMN SLRAEDTAVY YCVRHGNFGD SYVSWFAYWG 350
+QGTLVTVSSG KPGSGKPGSG KPGSGKPGSQ AVVTQEPSLT VSPGGTVTLT 400
+CGSSTGAVTT SNYANWVQQK PGKSPRGLIG GTNKRAPGVP ARFSGSLLGG 450
+KAALTISGAQ PEDEADYYCA LWYSNHWVFG GGTKLTVLGG GGSGGGGSKT 500
+HTCPPCPAPP VAGPSVFLFP PKPKDTLMIS RTPEVTCVVV DVKHEDPEVK 550
+FNWYVDGVEV HNAKTKPCEE QYGSTYRCVS VLTVLHQDWL NGKEYKCKVS 600
+NKALPAPIEK TISKAKGQPR EPQVYTLPPS REQMTKNQVK LTCLVKGFYP 650
+SDIAVEWESN GQPENNYKTT PPVLDSDGSF FLYSKLTVDK SRWQQGNVFS 700
+CSVMHEALHN HYTQKSLSLS PGK                              723
+//
+
