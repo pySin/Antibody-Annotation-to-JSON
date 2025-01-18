@@ -214,7 +214,6 @@ class AntibodyToJSON:
         key, value = record.split(":")
         sequence = value.strip().split(" ")[0].strip()
 
-        print(f"Key:{key}")
         if key == "CDRSource":
             self.antibody_ann_dict[key] = value.strip()
             return None
@@ -224,7 +223,6 @@ class AntibodyToJSON:
             key = key.split("[")[0]
             self.antibody_ann_dict[key] = [{"Sequence": instances, "Value": value.strip()}]
             return None
-        # print(f"cdr value: {value}")  # CDRSource[1,3]: Mus musculus;
         start, end = list(map(int, value.strip().split(" ")[1][1:-1].split("-")))
 
 
@@ -288,6 +286,7 @@ class AntibodyToJSON:
                                                         "Mutations": mutations_reasons})
 
     def heavy_potential_n_glycos_record(self, record):
+        print(f"Heavy Potential Record: {record}")
         instance = int(record.split(":")[0].split("[", 1)[1][:-1])
         # confirmed_or_potential = "Confirmed" if "Confirmed" in record.split("[", 1)[0] else "Potential"
         value = record.split(":", 1)[1].strip()
