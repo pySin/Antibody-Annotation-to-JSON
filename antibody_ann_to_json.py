@@ -109,7 +109,7 @@ class AntibodyToJSON:
 
     def range_record(self, record):
         key, value = record.split(":", 1)
-        instance = int(key.split("[")[1][:-1])
+        instance = int(key.split("[", 1)[1][:-1])
         key = key.split("[")[0]
         start, end = value.strip().split(" ", 1)[0].split("-")
 
@@ -286,7 +286,6 @@ class AntibodyToJSON:
                                                         "Mutations": mutations_reasons})
 
     def heavy_potential_n_glycos_record(self, record):
-        print(f"Heavy Potential Record: {record}")
         # instance = int(record.split(":")[0].split("[", 1)[1][:-1])
         # confirmed_or_potential = "Confirmed" if "Confirmed" in record.split("[", 1)[0] else "Potential"
         value = record.split(":", 1)[1].strip()
@@ -347,9 +346,20 @@ class AntibodyToJSON:
                                                            "Confirmed": [value]})
 
     def light_potential_n_glycos_record(self, record):
-        instance = int(record.split(":")[0].split("[", 1)[1][:-1])
+        # instance = int(record.split(":")[0].split("[", 1)[1][:-1])
         # confirmed_or_potential = "Confirmed" if "Confirmed" in record.split("[", 1)[0] else "Potential"
         value = record.split(":", 1)[1].strip()
+
+        instance = record.split(":")[0].strip()
+        if "[" not in instance:
+            if "LightNGlycos" not in self.antibody_ann_dict:
+                self.antibody_ann_dict["LightNGlycos"] = [{"Instance": "NONE", "Potential": [value]}]
+                return None
+            else:
+                self.antibody_ann_dict["LightNGlycos"].append({"Instance": "NONE", "Potential": [value]})
+                return None
+        else:
+            instance = instance.split("[", 1)[1][:-1]
 
         if "LightNGlycos" not in self.antibody_ann_dict:
             self.antibody_ann_dict["LightNGlycos"] = [{"Instance": [instance], "Potential": [value]}]
@@ -366,9 +376,20 @@ class AntibodyToJSON:
                                                            "Potential": [value]})
 
     def light_confirmed_n_glycos_record(self, record):
-        instance = int(record.split(":")[0].split("[", 1)[1][:-1])
+        # instance = int(record.split(":")[0].split("[", 1)[1][:-1])
         # confirmed_or_potential = "Confirmed" if "Confirmed" in record.split("[", 1)[0] else "Potential"
         value = record.split(":", 1)[1].strip()
+
+        instance = record.split(":")[0].strip()
+        if "[" not in instance:
+            if "LightNGlycos" not in self.antibody_ann_dict:
+                self.antibody_ann_dict["LightNGlycos"] = [{"Instance": "NONE", "Confirmed": [value]}]
+                return None
+            else:
+                self.antibody_ann_dict["LightNGlycos"].append({"Instance": "NONE", "Confirmed": [value]})
+                return None
+        else:
+            instance = instance.split("[", 1)[1][:-1]
 
         if "LightNGlycos" not in self.antibody_ann_dict:
             self.antibody_ann_dict["LightNGlycos"] = [{"Instance": [instance], "Confirmed": [value]}]
@@ -420,6 +441,14 @@ class AntibodyToJSON:
 
     def disulfides_inter(self, record):  # DisulfidesInterH1H2[2,5]: 222-230 225-233 350-353;
         key, value = record.split(":", 1)
+        print(f"Disulfides Inter: {record}")
+
+        if "[" not in key:
+            value = value.strip().split(" ")
+            connections = [{"A": int(c.split("-")[0]), "B": int(c.split("-")[1])} for c in value]
+            self.antibody_ann_dict[key] = [{"Bonds": connections}]
+            return None
+
         instance_a, instance_b = list(map(int, key.split("[")[1][:-1].split(",")))
         value = value.strip().split(" ")
         connections = [{"A": int(c.split("-")[0]), "B": int(c.split("-")[1])} for c in value]
