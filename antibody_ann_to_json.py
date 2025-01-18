@@ -287,9 +287,20 @@ class AntibodyToJSON:
 
     def heavy_potential_n_glycos_record(self, record):
         print(f"Heavy Potential Record: {record}")
-        instance = int(record.split(":")[0].split("[", 1)[1][:-1])
+        # instance = int(record.split(":")[0].split("[", 1)[1][:-1])
         # confirmed_or_potential = "Confirmed" if "Confirmed" in record.split("[", 1)[0] else "Potential"
         value = record.split(":", 1)[1].strip()
+
+        instance = record.split(":")[0].strip()
+        if "[" not in instance:
+            if "HeavyNGlycos" not in self.antibody_ann_dict:
+                self.antibody_ann_dict["HeavyNGlycos"] = [{"Instance": "NONE", "Potential": [value]}]
+                return None
+            else:
+                self.antibody_ann_dict["HeavyNGlycos"].append({"Instance": "NONE", "Potential": [value]})
+                return None
+        else:
+            instance = instance.split("[", 1)[1][:-1]
 
         if "HeavyNGlycos" not in self.antibody_ann_dict:
             self.antibody_ann_dict["HeavyNGlycos"] = [{"Instance": [instance], "Potential": [value]}]
@@ -306,9 +317,20 @@ class AntibodyToJSON:
                                                            "Potential": [value]})
 
     def heavy_confirmed_n_glycos_record(self, record):
-        instance = int(record.split(":")[0].split("[", 1)[1][:-1])
+        # instance = int(record.split(":")[0].split("[", 1)[1][:-1])
         # confirmed_or_potential = "Confirmed" if "Confirmed" in record.split("[", 1)[0] else "Potential"
         value = record.split(":", 1)[1].strip()
+
+        instance = record.split(":")[0].strip()
+        if "[" not in instance:
+            if "HeavyNGlycos" not in self.antibody_ann_dict:
+                self.antibody_ann_dict["HeavyNGlycos"] = [{"Instance": "NONE", "Confirmed": [value]}]
+                return None
+            else:
+                self.antibody_ann_dict["HeavyNGlycos"].append({"Instance": "NONE", "Confirmed": [value]})
+                return None
+        else:
+            instance = instance.split("[", 1)[1][:-1]
 
         if "HeavyNGlycos" not in self.antibody_ann_dict:
             self.antibody_ann_dict["HeavyNGlycos"] = [{"Instance": [instance], "Confirmed": [value]}]
