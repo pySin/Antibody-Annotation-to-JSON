@@ -8,7 +8,14 @@ class AntibodyAnnRunner:
         self.aa_run = antibody_ann_to_json.AntibodyToJSON(path)
 
     def run(self):
-        self.aa_run.single_file_transfer(self.path + "/" + self.aa_run.files[25])
+        if len(self.aa_run.files) > 0:
+            # Process the first file or any available one
+            self.aa_run.single_file_transfer(self.path + "/" + self.aa_run.files[0])
+        else:
+            print("No files found in the directory:", self.path)
+
+    # def run(self):
+    #     self.aa_run.single_file_transfer(self.path + "/" + self.aa_run.files[25])
 
 
 def main():
