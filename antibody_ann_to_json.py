@@ -214,6 +214,11 @@ class AntibodyToJSON:
         key, value = record.split(":")
         sequence = value.strip().split(" ")[0].strip()
 
+        print(f"Key:{key}")
+        if key == "CDRSource":
+            self.antibody_ann_dict[key] = value.strip()
+            return None
+
         if "CDRSource" in key:
             instances = [int(ins) for ins in key.split("[")[1][:-1].split(",")]
             key = key.split("[")[0]
