@@ -213,9 +213,17 @@ class AntibodyToJSON:
     def cdr_record(self, record):
         key, value = record.split(":")
         sequence = value.strip().split(" ")[0].strip()
+
+        if "CDRSource" in key:
+            instances = [int(ins) for ins in key.split("[")[1][:-1].split(",")]
+            key = key.split("[")[0]
+            self.antibody_ann_dict[key] = [{"Sequence": instances, "Value": value.strip()}]
+            return None
+        # print(f"cdr value: {value}")  # CDRSource[1,3]: Mus musculus;
         start, end = list(map(int, value.strip().split(" ")[1][1:-1].split("-")))
 
-        if "]" not in key:
+
+        if "[" not in key:
             self.antibody_ann_dict[key] = [{"Sequence": sequence, "Start": start, "End": end}]
             return None
 

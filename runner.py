@@ -12,6 +12,7 @@ class AntibodyAnnRunner:
 
 
 def main():
+    # Run main Script
     runner = AntibodyAnnRunner("samples")
     runner.run()
 
