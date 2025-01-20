@@ -10,7 +10,7 @@ class AntibodyAnnRunner:
     def run(self):
         if len(self.aa_run.files) > 0:
             # Process the first file or any available one
-            self.aa_run.single_file_transfer(self.path + "/" + self.aa_run.files[1])
+            self.aa_run.single_file_transfer(self.path + "/" + self.aa_run.files[2])
         else:
             print("No files found in the directory:", self.path)
 

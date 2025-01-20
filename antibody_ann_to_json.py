@@ -107,8 +107,15 @@ class AntibodyToJSON:
         else:
             self.antibody_ann_dict[key] = " ".join(value.split(" ")[:-1]).strip()
 
-    def range_record(self, record):
+    def range_record(self, record):  # VHRange: 1-116
         key, value = record.split(":", 1)
+
+        if "]" not in key:
+            key = key.strip()
+            start, end = map(int, (value.strip().split("-")))
+            self.antibody_ann_dict[key] = [{"Start": start, "End": end}]
+            return None
+
         instance = int(key.split("[", 1)[1][:-1])
         key = key.split("[")[0]
         start, end = value.strip().split(" ", 1)[0].split("-")
@@ -418,7 +425,13 @@ class AntibodyToJSON:
                                                 "Species": species, "GeneID": gene_id})
 
     def confirmed_ptm(self, record):  # LightConfirmedPTM[2]: glycation 148 182 189 (rare);
+        print(f"Confirmed PTM: {record}")
         key, value = record.split(":", 1)
+
+        if "[" not in key:  # HeavyConfirmedPTM: cterclip 446
+            self.antibody_ann_dict[key] = [{"Instance": "NONE", "Modifications":
+                                           [{"Type": m_type, "Position": position, "Frequency": frequency}]}]
+
         instance = list(map(int, (key.split("[", 1)[1][:-1].split(","))))
         key = key.split("[")[0]
         # print(f'm_type:{value.strip().split(" ")[0]}')
@@ -441,7 +454,6 @@ class AntibodyToJSON:
 
     def disulfides_inter(self, record):  # DisulfidesInterH1H2[2,5]: 222-230 225-233 350-353;
         key, value = record.split(":", 1)
-        print(f"Disulfides Inter: {record}")
 
         if "[" not in key:
             value = value.strip().split(" ")
