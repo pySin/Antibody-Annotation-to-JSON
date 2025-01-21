@@ -110,8 +110,17 @@ class AntibodyToJSON:
     def range_record(self, record):  # VHRange: 1-116
         key, value = record.split(":", 1)
 
-        if "]" not in key:
+        if "]" not in key:  # HingeRange: 220-231 (S229P)
             key = key.strip()
+
+            if "(" in value:
+                hinge_range, position = value.strip().split(" ")
+                position = position[1:-1]
+                start, end = [int(r) for r in hinge_range.split("-")]
+                self.antibody_ann_dict[key] = [{"Start": start, "End": end, "Position": position}]
+                return None
+
+            print(f"Range Record: {record}")
             start, end = map(int, (value.strip().split("-")))
             self.antibody_ann_dict[key] = [{"Start": start, "End": end}]
             return None
@@ -414,6 +423,11 @@ class AntibodyToJSON:
 
     def lv_germline(self, record):  # LVGermline[2]: Homo sapiens IGKV3-11*01;
         key, value = record.split(":", 1)
+
+        if "[" not in key:
+            self.lv_germline_no_instance(key, value)
+            return None
+
         instance = int(key.split("[", 1)[1][:-1])
         key = key.split("[")[0]
         species, gene_id = value.strip().rsplit(" ", 1)
@@ -424,13 +438,17 @@ class AntibodyToJSON:
             self.antibody_ann_dict[key].append({"Instance": [instance],
                                                 "Species": species, "GeneID": gene_id})
 
+    def lv_germline_no_instance(self, key, value):
+        species, gene_id = value.strip().rsplit(" ", 1)
+        self.antibody_ann_dict[key] = [{"Instance": "NONE", "Species": species, "GeneID": gene_id}]
+
     def confirmed_ptm(self, record):  # LightConfirmedPTM[2]: glycation 148 182 189 (rare);
-        print(f"Confirmed PTM: {record}")
         key, value = record.split(":", 1)
 
         if "[" not in key:  # HeavyConfirmedPTM: cterclip 446
-            self.antibody_ann_dict[key] = [{"Instance": "NONE", "Modifications":
-                                           [{"Type": m_type, "Position": position, "Frequency": frequency}]}]
+            self.confirmed_ptm_no_instance(key, value)
+            return None
+
 
         instance = list(map(int, (key.split("[", 1)[1][:-1].split(","))))
         key = key.split("[")[0]
@@ -451,6 +469,22 @@ class AntibodyToJSON:
                     return None
             self.antibody_ann_dict[key].append({"Instance": instance, "Modifications": [{"Type": m_type,
                                                 "Position": position, "Frequency": frequency}]})
+
+    def confirmed_ptm_no_instance(self, key, value):  # # HeavyConfirmedPTM: cterclip 446
+        values = value.strip().split(" ")
+
+        m_type = values[0]
+        if "(" in values[-1]:
+            frequency = values[-1][1:-1]
+            position = values[1:-1]
+            self.antibody_ann_dict[key] = [{"Instance": "NONE", "Modifications":
+                                           [{"Type": m_type, "Position": position, "Frequency": frequency}]}]
+        else:
+            position = values[1]
+            frequency = ""
+            self.antibody_ann_dict[key] = [{"Instance": "NONE", "Modifications":
+                                           [{"Type": m_type, "Position": position, "Frequency": frequency}]}]
+
 
     def disulfides_inter(self, record):  # DisulfidesInterH1H2[2,5]: 222-230 225-233 350-353;
         key, value = record.split(":", 1)
