@@ -51,11 +51,12 @@ class AntibodyToJSON:
             records = [r for r in records if len(r) > 2]
 
             if "Format:" in records[0]:
-                split_first_record = records[0].split("F")
+                split_first_record = records[0].split("F", 1)
                 split_first_record[1] = "F" + split_first_record[1]
                 records = records[1:]
                 for i in range(len(split_first_record) -1, -1, -1):
                     records.insert(0, split_first_record[i])
+            print(f"Records: {records}")
             return records
 
     def single_file_transfer(self, filename):
