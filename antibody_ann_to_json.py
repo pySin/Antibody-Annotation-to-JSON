@@ -117,10 +117,9 @@ class AntibodyToJSON:
                 hinge_range, position = value.strip().split(" ")
                 position = position[1:-1]
                 start, end = [int(r) for r in hinge_range.split("-")]
-                self.antibody_ann_dict[key] = [{"Start": start, "End": end, "Position": position}]
+                self.antibody_ann_dict[key] = [{"Start": start, "End": end, "Mutations": position}]
                 return None
 
-            print(f"Range Record: {record}")
             start, end = map(int, (value.strip().split("-")))
             self.antibody_ann_dict[key] = [{"Start": start, "End": end}]
             return None
@@ -265,6 +264,11 @@ class AntibodyToJSON:
 
     def mutation_h_record(self, record):
         key, value = record.split(":", 1)
+
+        if "]" not in key:
+            self.mutation_h_record_no_instance(key, value)
+            return None
+
         instance = int(key.split("[")[1][:-1])
         mutations = value.split("(", 1)[0].strip().split(" ")
         reason = value.split("(", 1)[1][:-1]
@@ -281,6 +285,17 @@ class AntibodyToJSON:
                     return None
             self.antibody_ann_dict["MutationH"].append({"Instance": [instance],
                                                         "Mutations": mutations_reasons})
+
+    def mutation_h_record_no_instance(self, key, value):
+        mutations = value.split("(", 1)[0].strip().split(" ")
+        reason = value.split("(", 1)[1][:-1]
+        mutations_reasons = [{"Mutation": m, "Reason": reason} for m in mutations]
+        if "MutationH" in self.antibody_ann_dict:
+            self.antibody_ann_dict["MutationH"].append({"Instance": "NONE",
+                                                        "Mutations": mutations_reasons})
+        else:
+            self.antibody_ann_dict["MutationH"] = [{"Instance": "None",
+                                                    "Mutations": mutations_reasons}]
 
     def mutation_l_record(self, record):
         key, value = record.split(":", 1)
@@ -571,6 +586,7 @@ class AntibodyToJSON:
             self.antibody_ann_dict["Chain"] = chain_sequence
 
     def normal_record(self, record):
+        print(f"Normal Record: {record}")
         key, value = record.split(":", 1)
         if "[" in key:
             self.any_instance_record(record)
