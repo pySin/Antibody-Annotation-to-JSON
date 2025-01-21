@@ -56,7 +56,6 @@ class AntibodyToJSON:
                 records = records[1:]
                 for i in range(len(split_first_record) -1, -1, -1):
                     records.insert(0, split_first_record[i])
-            print(f"Records: {records}")
             return records
 
     def single_file_transfer(self, filename):
@@ -587,7 +586,6 @@ class AntibodyToJSON:
             self.antibody_ann_dict["Chain"] = chain_sequence
 
     def normal_record(self, record):
-        print(f"Normal Record: {record}")
         key, value = record.split(":", 1)
         if "[" in key:
             self.any_instance_record(record)
