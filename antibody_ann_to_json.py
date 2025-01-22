@@ -515,7 +515,6 @@ class AntibodyToJSON:
     def disulfides_inter(self, record):  # DisulfidesInterH1H2[2,5]: 222-230 225-233 350-353;
         key, value = record.split(":", 1)
 
-        print(f"Disulfides Inter Record: {record}")
         if "[" not in key:
             value = value.strip().split(" ")
             connections = [{"A": int(c.split("-")[0]), "B": int(c.split("-")[1])} for c in value]
@@ -527,8 +526,11 @@ class AntibodyToJSON:
             value = value.strip().split(" ")
             connections = [{"A": int(c.split("-")[0]), "B": int(c.split("-")[1])} for c in value]
             key = key.split("[")[0]
+            self.antibody_ann_dict[key] = [{"Instance": dis_instances, "Bonds": connections}]
+            return None
 
-        instance_a, instance_b = list(map(int, key.split("[")[1][:-1].split(",")))
+        # instance_a, instance_b = list(map(int, key.split("[")[1][:-1].split(",")))
+        instance_a, instance_b = dis_instances
         value = value.strip().split(" ")
         connections = [{"A": int(c.split("-")[0]), "B": int(c.split("-")[1])} for c in value]
         key = key.split("[")[0]
