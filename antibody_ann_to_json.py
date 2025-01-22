@@ -8,6 +8,7 @@ class AntibodyToJSON:
     def __init__(self, path):
         self.path = path
         self.files = os.listdir(path)
+        self.current_records = None
         # print(self.files)
         self.antibody_ann_dict = {}
         self.old_key = None
@@ -63,8 +64,8 @@ class AntibodyToJSON:
         is_key_part_found = False
 
         # Produce JSON file from .txt annotation file
-        current_records = self.read_divide_records(filename)
-        for record in current_records:
+        self.current_records = self.read_divide_records(filename)
+        for record in self.current_records:
 
             key = record.split(":")[0]
             key = key[:key.index("[")] if "[" in key else key
@@ -182,9 +183,19 @@ class AntibodyToJSON:
             return None
 
         note_instance = int(note_instance)
+        # print(f"All records: {self.current_records}")
+        # print(f"Instance KeyValue: {key}::{value}")
+        #
+        # print(f"Old Value: {self.antibody_ann_dict[self.old_key]}")
+        # print(f"Old Key: {self.old_key}")
+        if type(self.antibody_ann_dict[self.old_key]) == str:
+            self.antibody_ann_dict[self.old_key + "-Note-" + str(note_instance)] = key.strip()
+            return None
+        # Ask the old value if it has instance. If it doesn't have an instance, add the instance.
         note_index = [self.antibody_ann_dict[self.old_key].index(inst)
                       for inst in self.antibody_ann_dict[self.old_key]
-                      if note_instance in inst["Instance"]][0]
+                      if note_instance in inst["Instance"]][0]  # Format: bispecific human monoclonal antibody /
+                                                                # Here there is still no instance
         self.antibody_ann_dict[self.old_key][note_index]["Note"] = value.strip()
 
     def multiple_instance_note(self, key, value):
@@ -504,11 +515,18 @@ class AntibodyToJSON:
     def disulfides_inter(self, record):  # DisulfidesInterH1H2[2,5]: 222-230 225-233 350-353;
         key, value = record.split(":", 1)
 
+        print(f"Disulfides Inter Record: {record}")
         if "[" not in key:
             value = value.strip().split(" ")
             connections = [{"A": int(c.split("-")[0]), "B": int(c.split("-")[1])} for c in value]
             self.antibody_ann_dict[key] = [{"Bonds": connections}]
             return None
+
+        dis_instances = list(map(int, key.split("[")[1][:-1].split(",")))
+        if len(dis_instances) == 1:
+            value = value.strip().split(" ")
+            connections = [{"A": int(c.split("-")[0]), "B": int(c.split("-")[1])} for c in value]
+            key = key.split("[")[0]
 
         instance_a, instance_b = list(map(int, key.split("[")[1][:-1].split(",")))
         value = value.strip().split(" ")
