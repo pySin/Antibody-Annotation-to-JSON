@@ -115,7 +115,8 @@ class AntibodyToJSON:
             key = key.strip()
 
             if "(" in value:
-                print(f"range_record: {value}")
+                print(f"range_record_key: {key}")
+                print(f"range_record_value: {value}")
                 hinge_range, position = value.strip().split(" ")  # split only once and test all scripts again
                 position = position[1:-1]
                 start, end = [int(r) for r in hinge_range.split("-")]
