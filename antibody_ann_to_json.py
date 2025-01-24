@@ -115,7 +115,8 @@ class AntibodyToJSON:
             key = key.strip()
 
             if "(" in value:
-                hinge_range, position = value.strip().split(" ")
+                print(f"range_record: {value}")
+                hinge_range, position = value.strip().split(" ")  # split only once and test all scripts again
                 position = position[1:-1]
                 start, end = [int(r) for r in hinge_range.split("-")]
                 self.antibody_ann_dict[key] = [{"Start": start, "End": end, "Mutations": position}]
@@ -189,7 +190,7 @@ class AntibodyToJSON:
         # print(f"Old Value: {self.antibody_ann_dict[self.old_key]}")
         # print(f"Old Key: {self.old_key}")
         if type(self.antibody_ann_dict[self.old_key]) == str:
-            self.antibody_ann_dict[self.old_key + "-Note-" + str(note_instance)] = key.strip()
+            self.antibody_ann_dict[self.old_key + "-Note-" + str(note_instance)] = value.strip()
             return None
         # Ask the old value if it has instance. If it doesn't have an instance, add the instance.
         note_index = [self.antibody_ann_dict[self.old_key].index(inst)
