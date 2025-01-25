@@ -14,7 +14,7 @@ class AntibodyToJSON:
             is the data going directly into the JSONfile,
         the old key is used to keep the key from the previous record. It is
             used in the Note records to add a note to e previous record.
-        the methods
+        the methods used to transform the records and insert them into the main dictionary(self.methods)
         :param path:
         """
         self.path = path
