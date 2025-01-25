@@ -78,9 +78,6 @@ class AntibodyToJSON:
 
             if is_key_part_found:
                 is_key_part_found = False
-                # print(f"Key: {key}")
-                # if key != "Note":
-                #     self.old_key = key
                 continue
 
             if key in self.methods:
@@ -194,10 +191,7 @@ class AntibodyToJSON:
 
         if self.old_key == "HeavyConfirmedNGlycos":
             self.antibody_ann_dict[self.old_key] = "HeavyNGlycos"
-        print(f"Note Record: {key}: {value}")
-        #
-        print(f"Old Value: {self.antibody_ann_dict[self.old_key]}")
-        print(f"Old Key: {self.old_key}")
+
         if type(self.antibody_ann_dict[self.old_key]) == str:
             self.antibody_ann_dict[self.old_key + "-Note-" + str(note_instance)] = value.strip()
             return None
@@ -217,34 +211,6 @@ class AntibodyToJSON:
         else:
             self.antibody_ann_dict[self.old_key + "_Instances_Note"].append({"Instance": note_instances,
                                                                              "Note": value.strip()})
-
-    def any_instance_record(self, record):
-        key, value = record.split(":")
-        # value = value.strip().split(" ") if " " in value else value.strip()
-        value = value.strip()  # [:-1]
-        if any(v for v in value if v not in "1234567890 ;"):
-            pass
-        else:
-            value = list(map(int, value.split(" ")))
-
-        name_key, instance = key.split("[")
-        instance = instance[:-1].strip()
-        if "," in instance:
-            instance = instance.split(",")
-        elif "-" in instance:
-            instance = instance.split("-")
-
-        # print(f"Outside all: {instance}")
-        if all(item.isdigit() for item in instance):
-            # print(f"In all instances: {instance}")
-            instance = [int(num) for num in instance]
-
-        if name_key not in self.antibody_ann_dict:
-            data = [{"Instance": instance, "Values": value}]
-            self.antibody_ann_dict[name_key] = data
-        else:
-            data = {"Instance": instance, "Values": value}
-            self.antibody_ann_dict[name_key].append(data)
 
     def cdr_record(self, record):
         key, value = record.split(":")
@@ -521,9 +487,7 @@ class AntibodyToJSON:
             self.antibody_ann_dict[key] = [{"Instance": "NONE", "Modifications":
                                            [{"Type": m_type, "Position": position, "Frequency": frequency}]}]
 
-
     def disulfides_inter(self, record): # DisulfidesInterH1H2[2,5]: 222-230 225-233 350-353;
-        print(f"Disulfides Record: {record}")
         key, value = record.split(":", 1)
 
         if "[" not in key:
@@ -620,6 +584,31 @@ class AntibodyToJSON:
                                                 "Sequence": chain_sequence}]
         else:
             self.antibody_ann_dict["Chain"] = chain_sequence
+
+    def any_instance_record(self, record):
+        key, value = record.split(":")
+        value = value.strip()  # [:-1]
+        if any(v for v in value if v not in "1234567890 ;"):
+            pass
+        else:
+            value = list(map(int, value.split(" ")))
+
+        name_key, instance = key.split("[")
+        instance = instance[:-1].strip()
+        if "," in instance:
+            instance = instance.split(",")
+        elif "-" in instance:
+            instance = instance.split("-")
+
+        if all(item.isdigit() for item in instance):
+            instance = [int(num) for num in instance]
+
+        if name_key not in self.antibody_ann_dict:
+            data = [{"Instance": instance, "Values": value}]
+            self.antibody_ann_dict[name_key] = data
+        else:
+            data = {"Instance": instance, "Values": value}
+            self.antibody_ann_dict[name_key].append(data)
 
     def normal_record(self, record):
         key, value = record.split(":", 1)
