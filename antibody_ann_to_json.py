@@ -38,7 +38,7 @@ class AntibodyToJSON:
 
     @staticmethod
     def read_divide_records(filename):
-        with open(filename, "r") as f:
+        with open(filename, "r", encoding='utf-8') as f:
             # Split by semicolon and filter new lines(\n)
             content = [record.replace("\n", "") for record in f.read().split(";")]
             records = []
@@ -78,6 +78,9 @@ class AntibodyToJSON:
 
             if is_key_part_found:
                 is_key_part_found = False
+                # print(f"Key: {key}")
+                # if key != "Note":
+                #     self.old_key = key
                 continue
 
             if key in self.methods:
@@ -87,8 +90,11 @@ class AntibodyToJSON:
             self.old_key = key
 
         filename = filename.split("/")[1]
-        with open(f"{filename.split('.')[0]}.json", "w") as jf:
+        with open(f"json_files/{filename.split('.')[0]}.json", "w") as jf:
             json.dump(self.antibody_ann_dict, jf, indent=4)
+
+        self.antibody_ann_dict = {}
+        self.old_key = None
 
     def antigen_record(self, record):
         key, value = record.split(":", 1)
@@ -185,9 +191,13 @@ class AntibodyToJSON:
         note_instance = int(note_instance)
         # print(f"All records: {self.current_records}")
         # print(f"Instance KeyValue: {key}::{value}")
+
+        if self.old_key == "HeavyConfirmedNGlycos":
+            self.antibody_ann_dict[self.old_key] = "HeavyNGlycos"
+        print(f"Note Record: {key}: {value}")
         #
-        # print(f"Old Value: {self.antibody_ann_dict[self.old_key]}")
-        # print(f"Old Key: {self.old_key}")
+        print(f"Old Value: {self.antibody_ann_dict[self.old_key]}")
+        print(f"Old Key: {self.old_key}")
         if type(self.antibody_ann_dict[self.old_key]) == str:
             self.antibody_ann_dict[self.old_key + "-Note-" + str(note_instance)] = value.strip()
             return None
@@ -512,11 +522,17 @@ class AntibodyToJSON:
                                            [{"Type": m_type, "Position": position, "Frequency": frequency}]}]
 
 
-    def disulfides_inter(self, record):  # DisulfidesInterH1H2[2,5]: 222-230 225-233 350-353;
+    def disulfides_inter(self, record): # DisulfidesInterH1H2[2,5]: 222-230 225-233 350-353;
+        print(f"Disulfides Record: {record}")
         key, value = record.split(":", 1)
 
         if "[" not in key:
             value = value.strip().split(" ")
+
+            if value == ["NONE"]:
+                self.antibody_ann_dict[key] = value
+                return None
+
             connections = [{"A": int(c.split("-")[0]), "B": int(c.split("-")[1])} for c in value]
             self.antibody_ann_dict[key] = [{"Bonds": connections}]
             return None

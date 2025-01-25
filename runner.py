@@ -1,4 +1,5 @@
 import antibody_ann_to_json
+import os
 
 
 class AntibodyAnnRunner:
@@ -7,11 +8,17 @@ class AntibodyAnnRunner:
         self.path = path
         self.aa_run = antibody_ann_to_json.AntibodyToJSON(path)
 
+    @staticmethod
+    def directory_json_files():
+        directory = "json_files"
+        os.makedirs(directory, exist_ok=True)
+
     def run(self):
         if len(self.aa_run.files) > 0:
             # Process the first file or any available one
-            print(f"Current File: {self.aa_run.files[10]}")
-            self.aa_run.single_file_transfer(self.path + "/" + self.aa_run.files[10])
+            for i in range(len(self.aa_run.files)):
+                print(f"Current File: {self.aa_run.files[i]}")
+                self.aa_run.single_file_transfer(self.path + "/" + self.aa_run.files[i])
         else:
             print("No files found in the directory:", self.path)
 
@@ -22,6 +29,7 @@ class AntibodyAnnRunner:
 def main():
     # Run main Script
     runner = AntibodyAnnRunner("samples")
+    runner.directory_json_files()
     runner.run()
 
 
