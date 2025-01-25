@@ -48,6 +48,11 @@ class AntibodyToJSON:
 
     @staticmethod
     def read_divide_records(filename):
+        """
+        Receive the file name and separate each line/record
+        :param filename:
+        :return: list
+        """
         with open(filename, "r", encoding='utf-8') as f:
             # Split by semicolon and filter new lines(\n)
             content = [record.replace("\n", "") for record in f.read().split(";")]
