@@ -7,7 +7,7 @@ class AntibodyToJSON:
 
     def __init__(self, path):
         self.path = path
-        self.files = os.listdir(path)
+        self.files = [file for file in os.listdir(path) if file.endswith(".txt")]
         self.current_records = None
         # print(self.files)
         self.antibody_ann_dict = {}
@@ -115,12 +115,10 @@ class AntibodyToJSON:
             key = key.strip()
 
             if "(" in value:
-                print(f"range_record_key: {key}")
-                print(f"range_record_value: {value}")
-                hinge_range, position = value.strip().split(" ")  # split only once and test all scripts again
-                position = position[1:-1]
+                hinge_range, position = value.strip().split(" ", 1)  # split only once and test all scripts again
+                position = [p for p in position[1:-1].split(" ")]
                 start, end = [int(r) for r in hinge_range.split("-")]
-                self.antibody_ann_dict[key] = [{"Start": start, "End": end, "Mutations": position}]
+                self.antibody_ann_dict[key] = [{"Instance": ["NONE"], "Start": start, "End": end, "Mutations": position}]
                 return None
 
             start, end = map(int, (value.strip().split("-")))
