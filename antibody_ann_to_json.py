@@ -76,6 +76,11 @@ class AntibodyToJSON:
             return records
 
     def single_file_transfer(self, filename):
+        """
+
+        :param filename:
+        :return:
+        """
         key_parts = ["Note", "CDR", "Range", "ConfirmedPTM", "DisulfidesInter"]  # Next:
         is_key_part_found = False
 
