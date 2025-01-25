@@ -9,7 +9,12 @@ class AntibodyToJSON:
         """
         Set the main attributes: the folder with the annotation files(samples),
         the antibody annotation text files list(self.files) to work with,
-        the data records from the current annotation file,
+        the data records from the current annotation file(self.current_record),
+        the main dictionary being constructed (self.antibody_ann_dict). This
+            is the data going directly into the JSONfile,
+        the old key is used to keep the key from the previous record. It is
+            used in the Note records to add a note to e previous record.
+        the methods
         :param path:
         """
         self.path = path
