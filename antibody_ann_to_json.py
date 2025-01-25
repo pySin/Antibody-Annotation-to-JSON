@@ -6,10 +6,15 @@ import os
 class AntibodyToJSON:
 
     def __init__(self, path):
+        """
+        Set the main attributes: the folder with the annotation files(samples)
+        the antibody annotation text files(self.files)
+        to work with
+        :param path:
+        """
         self.path = path
         self.files = [file for file in os.listdir(path) if file.endswith(".txt")]
         self.current_records = None
-        # print(self.files)
         self.antibody_ann_dict = {}
         self.old_key = None
         self.methods = {
