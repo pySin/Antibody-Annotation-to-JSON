@@ -7,9 +7,9 @@ class AntibodyToJSON:
 
     def __init__(self, path):
         """
-        Set the main attributes: the folder with the annotation files(samples)
-        the antibody annotation text files(self.files)
-        to work with
+        Set the main attributes: the folder with the annotation files(samples),
+        the antibody annotation text files list(self.files) to work with,
+        the data records from the current annotation file,
         :param path:
         """
         self.path = path
@@ -191,8 +191,6 @@ class AntibodyToJSON:
             return None
 
         note_instance = int(note_instance)
-        # print(f"All records: {self.current_records}")
-        # print(f"Instance KeyValue: {key}::{value}")
 
         if self.old_key == "HeavyConfirmedNGlycos":
             self.antibody_ann_dict[self.old_key] = "HeavyNGlycos"
