@@ -66,6 +66,7 @@ class AntibodyToJSON:
                     records.append(r)
             records = [r for r in records if len(r) > 2]
 
+            # If there isn't a semicolon at the end of line 1 divide the first and second record.
             if "Format:" in records[0]:
                 split_first_record = records[0].split("F", 1)
                 split_first_record[1] = "F" + split_first_record[1]
