@@ -79,7 +79,8 @@ class AntibodyToJSON:
         """
         # Transform one annotation text file to JSON.
         # Handle the records by name type(key_parts), or by absolute name.
-        #
+        # Use the first part of the record, the key to map the record to the method
+        # that handles it in self.methods.
         :param filename:
         :return:
         """
