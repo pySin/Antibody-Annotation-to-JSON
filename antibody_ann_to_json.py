@@ -78,6 +78,8 @@ class AntibodyToJSON:
     def single_file_transfer(self, filename):
         """
         # Transform one annotation text file to JSON.
+        # Handle the records by name type(key_parts), or by absolute name.
+        #
         :param filename:
         :return:
         """
