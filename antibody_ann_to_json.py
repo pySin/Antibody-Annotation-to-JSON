@@ -114,6 +114,7 @@ class AntibodyToJSON:
         with open(f"json_files/{filename.split('.')[0]}.json", "w") as jf:
             json.dump(self.antibody_ann_dict, jf, indent=4)
 
+        # Empty the data dictionary and the old key for the next document
         self.antibody_ann_dict = {}
         self.old_key = None
 
