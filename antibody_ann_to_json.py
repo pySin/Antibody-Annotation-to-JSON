@@ -13,7 +13,7 @@ class AntibodyToJSON:
         the main dictionary being constructed (self.antibody_ann_dict). This
             is the data going directly into the JSONfile,
         the old key is used to keep the key from the previous record. It is
-            used in the Note records to add a note to e previous record.
+            used in the Note records to add a note to e previous record. Test
         the methods used to transform the records and insert them into the main dictionary(self.methods)
         :param path:
         """
