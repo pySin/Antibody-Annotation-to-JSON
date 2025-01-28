@@ -11,9 +11,9 @@ class AntibodyToJSON:
         the antibody annotation text files list(self.files) to work with,
         the data records from the current annotation file(self.current_record),
         the main dictionary being constructed (self.antibody_ann_dict). This
-            is the data going directly into the JSONfile,
+            is the data going directly into the JSON file,
         the old key is used to keep the key from the previous record. It is
-            used in the Note records to add a note to e previous record. Test
+            used in the Note records to add a note to e previous record. Test 2
         the methods used to transform the records and insert them into the main dictionary(self.methods)
         :param path:
         """

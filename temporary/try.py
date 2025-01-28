@@ -20,18 +20,27 @@
 # @property functionality
 
 
-class PropTry:
+# class PropTry:
+#
+#     def __init__(self):
+#         self.a = 2
+#
+#     @property
+#     def static_return(self):
+#         return [i for i in range(13)]
+#
+#     def print_property(self):
+#         print(self.static_return)
+#
+#
+# pt1 = PropTry()
+# pt1.print_property()
 
-    def __init__(self):
-        self.a = 2
+# Environment Variables
 
-    @property
-    def static_return(self):
-        return [i for i in range(13)]
-
-    def print_property(self):
-        print(self.static_return)
+import os
 
 
-pt1 = PropTry()
-pt1.print_property()
+os.environ["var_333"] = "Test value 3"
+
+
