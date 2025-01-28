@@ -42,5 +42,5 @@ import os
 
 
 os.environ["var_333"] = "Test value 3"
-
-
+print(f"{os.environ["var_333"]}")
+print(f"{os.environ}")
