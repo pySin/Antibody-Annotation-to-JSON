@@ -18,6 +18,7 @@ class AntibodyAnnRunner:
             # Process the first file or any available one
             for i in range(len(self.aa_run.files)):
                 print(f"Current File: {self.aa_run.files[i]}")
+                print(f"File Number: {i}")
                 self.aa_run.single_file_transfer(self.path + "/" + self.aa_run.files[i])
         else:
             print("No files found in the directory:", self.path)
