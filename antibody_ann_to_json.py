@@ -597,6 +597,7 @@ class AntibodyToJSON:
         # instance_a, instance_b = list(map(int, key.split("[")[1][:-1].split(",")))
         instance_a, instance_b = dis_instances
         value = value.strip().split(" ")
+        print(f"Current Record: {record}")
         connections = [{"A": int(c.split("-")[0]), "B": int(c.split("-")[1])} for c in value]
         key = key.split("[")[0]
 
