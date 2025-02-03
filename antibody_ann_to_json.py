@@ -162,9 +162,7 @@ class AntibodyToJSON:
                     return None
 
                 hinge_range, position = value.strip().split(" ", 1)  # split only once and test all scripts again
-                print(f"Range Record Value: {value}")
                 position = [p for p in position[1:-1].split(" ")]
-                print(f"Hinge Range: {hinge_range}")
                 start, end = [int(r) for r in hinge_range.split("-")]
                 data = {"Instance": ["NONE"], "Start": start, "End": end, "Mutations": position}
                 if key in self.antibody_ann_dict:
@@ -208,6 +206,7 @@ class AntibodyToJSON:
                 self.antibody_ann_dict["Domains"].append({"Instance": "NONE", "value": value})
 
     def note_record(self, record):
+        print(f"Note Record: {record}")
         key, value = record.split(":", 1)
 
         if key != "Note":
@@ -238,6 +237,7 @@ class AntibodyToJSON:
                     self.antibody_ann_dict[self.old_key][i]["Note"] = value.strip()
 
     def instance_note(self, key, value):
+        print(f"Instance Note key: {key}, value: {value}")
         note_instance = key.split("[")[1][:-1]
         if "," in note_instance:
             self.methods["Multiple_Instance_Note"](key, value)
@@ -597,7 +597,6 @@ class AntibodyToJSON:
         # instance_a, instance_b = list(map(int, key.split("[")[1][:-1].split(",")))
         instance_a, instance_b = dis_instances
         value = value.strip().split(" ")
-        print(f"Current Record: {record}")
         connections = [{"A": int(c.split("-")[0]), "B": int(c.split("-")[1])} for c in value]
         key = key.split("[")[0]
 
