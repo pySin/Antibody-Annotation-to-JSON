@@ -102,7 +102,10 @@ class AntibodyToJSON:
 
             if is_key_part_found:
                 is_key_part_found = False
-                self.old_key = key
+                if key == "Note":
+                    pass
+                else:
+                    self.old_key = key
                 continue
 
             if key in self.methods:
@@ -189,11 +192,20 @@ class AntibodyToJSON:
 
     def domains_record(self, record):
         value = record.split(":", 1)[1].strip()
+        key = record.split(":", 1)[0].strip()
 
         if "Domains" not in self.antibody_ann_dict:
-            self.antibody_ann_dict["Domains"] = ["dummy", value]
+            if "[" in key:
+                instance = [int(inst) for inst in key.strip().split("[")[1][:-1].split(",")]
+                self.antibody_ann_dict["Domains"] = [{"Instance": instance, "value": value}]
+            else:
+                self.antibody_ann_dict["Domains"] = [{"Instance": "NONE", "value": value}]
         else:
-            self.antibody_ann_dict["Domains"].append(value)
+            if "[" in key:
+                instance = [int(inst) for inst in key.strip().split("[")[1][:-1].split(",")]
+                self.antibody_ann_dict["Domains"].append({"Instance": instance, "value": value})
+            else:
+                self.antibody_ann_dict["Domains"].append({"Instance": "NONE", "value": value})
 
     def note_record(self, record):
         key, value = record.split(":", 1)
@@ -236,15 +248,15 @@ class AntibodyToJSON:
         if self.old_key == "HeavyConfirmedNGlycos":
             self.antibody_ann_dict[self.old_key] = "HeavyNGlycos"
 
-        if type(self.antibody_ann_dict[self.old_key]) == str:
-            self.antibody_ann_dict[self.old_key + "-Note-" + str(note_instance)] = value.strip()
-            return None
         # Ask the old value if it has instance. If it doesn't have an instance, add the instance.
         # print(f"Current Key: {key}")
         # print(f"Current Value: {value}")
         # print(f"Old key: {self.old_key}")
-        # print(f"Old Key State: {self.antibody_ann_dict[self.old_key]}")
+        # print(f"Old Key Value: {self.antibody_ann_dict[self.old_key]}")
         # print(f"Note Instance: {note_instance}")
+        if type(self.antibody_ann_dict[self.old_key]) == str:
+            self.antibody_ann_dict[self.old_key + "-Note-" + str(note_instance)] = value.strip()
+            return None
         note_index = [self.antibody_ann_dict[self.old_key].index(inst)
                       for inst in self.antibody_ann_dict[self.old_key]
                       if note_instance in inst["Instance"]][0]  # Format: bispecific human monoclonal antibody /
@@ -342,7 +354,6 @@ class AntibodyToJSON:
                                                     "Mutations": mutations_reasons}]
 
     def mutation_l_record(self, record):
-        print(f"Mutation L Record: {record}")
         key, value = record.split(":", 1)
 
         if "[" in key:
