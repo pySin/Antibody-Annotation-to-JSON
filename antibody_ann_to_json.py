@@ -206,8 +206,8 @@ class AntibodyToJSON:
                 self.antibody_ann_dict["Domains"].append({"Instance": "NONE", "value": value})
 
     def note_record(self, record):
-        print(f"Note Record: {record}")
         key, value = record.split(":", 1)
+        key = key.strip()
 
         if key != "Note":
             if self.old_key == "Antigen":
@@ -237,7 +237,6 @@ class AntibodyToJSON:
                     self.antibody_ann_dict[self.old_key][i]["Note"] = value.strip()
 
     def instance_note(self, key, value):
-        print(f"Instance Note key: {key}, value: {value}")
         note_instance = key.split("[")[1][:-1]
         if "," in note_instance:
             self.methods["Multiple_Instance_Note"](key, value)
