@@ -177,16 +177,19 @@ class AntibodyToJSON:
 
         instance = int(key.split("[", 1)[1][:-1])
         key = key.split("[")[0]
-        start, end = value.strip().split(" ", 1)[0].split("-")
-
-        mutations = value.split("(", 1)[1][:-2].split(" ") if "(" in value else "NONE"
-        data = {"Instance": [instance], "Start": int(start), "End": int(end), "Mutations": mutations}
+        print(f"range record value: {record}")
+        if "-" not in value:
+            mutations = value.split("(", 1)[1][:-2].split(" ") if "(" in value else "NONE"
+            data = {"Instance": [instance], "Start": "NONE", "End": "NONE", "Mutations": mutations}
+        else:
+            start, end = value.strip().split(" ", 1)[0].split("-")
+            mutations = value.split("(", 1)[1][:-2].split(" ") if "(" in value else "NONE"
+            data = {"Instance": [instance], "Start": int(start), "End": int(end), "Mutations": mutations}
 
         if key in self.antibody_ann_dict:
             self.antibody_ann_dict[key].append(data)
         else:
-            self.antibody_ann_dict[key] = [{"Instance": [instance], "Start": int(start), "End": int(end),
-                                            "Mutations": mutations}]
+            self.antibody_ann_dict[key] = [data]
 
     def domains_record(self, record):
         value = record.split(":", 1)[1].strip()
@@ -237,30 +240,43 @@ class AntibodyToJSON:
                     self.antibody_ann_dict[self.old_key][i]["Note"] = value.strip()
 
     def instance_note(self, key, value):
+        print(f"Instance Key: {key}")
+        print(f"Instance Value: {value}")
         note_instance = key.split("[")[1][:-1]
         if "," in note_instance:
             self.methods["Multiple_Instance_Note"](key, value)
             return None
 
         note_instance = int(note_instance)
+        note_index = None
 
         if self.old_key == "HeavyConfirmedNGlycos":
             self.antibody_ann_dict[self.old_key] = "HeavyNGlycos"
 
         # Ask the old value if it has instance. If it doesn't have an instance, add the instance.
-        # print(f"Current Key: {key}")
-        # print(f"Current Value: {value}")
-        # print(f"Old key: {self.old_key}")
-        # print(f"Old Key Value: {self.antibody_ann_dict[self.old_key]}")
-        # print(f"Note Instance: {note_instance}")
+        print(f"Current Key: {key}")
+        print(f"Current Value: {value}")
+        print(f"Old key: {self.old_key}")
+        print(f"Old Value: {self.antibody_ann_dict[self.old_key]}")
+        print(f"Note Instance: {note_instance}")
         if type(self.antibody_ann_dict[self.old_key]) == str:
             self.antibody_ann_dict[self.old_key + "-Note-" + str(note_instance)] = value.strip()
             return None
-        note_index = [self.antibody_ann_dict[self.old_key].index(inst)
+        result = [self.antibody_ann_dict[self.old_key].index(inst)
                       for inst in self.antibody_ann_dict[self.old_key]
-                      if note_instance in inst["Instance"]][0]  # Format: bispecific human monoclonal antibody /
-                                                                # Here there is still no instance
-        self.antibody_ann_dict[self.old_key][note_index]["Note"] = value.strip()
+                      if note_instance in inst["Instance"]]
+
+        if result:
+            note_index = result[0]
+            self.antibody_ann_dict[self.old_key][note_index]["Note"] = value.strip()
+        else:
+            self.antibody_ann_dict[self.old_key][0]["Note"] += ", " + value.strip()
+
+        # note_index = [self.antibody_ann_dict[self.old_key].index(inst)
+        #               for inst in self.antibody_ann_dict[self.old_key]
+        #               if note_instance in inst["Instance"]][0]  # Format: bispecific human monoclonal antibody /
+        #                                                         # Here there is still no instance
+        # self.antibody_ann_dict[self.old_key][note_index]["Note"] = value.strip()
 
     def multiple_instance_note(self, key, value):
         note_instances = list(map(int, key.split("[")[1][:-1].split(",")))
