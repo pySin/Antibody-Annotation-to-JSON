@@ -102,6 +102,8 @@ class AntibodyToJSON:
 
             if is_key_part_found:
                 is_key_part_found = False
+                # If the current key is "Note" don't assign it to the self.old_key.
+                # Keep the old key if the note is followed by another note
                 if key == "Note":
                     pass
                 else:
