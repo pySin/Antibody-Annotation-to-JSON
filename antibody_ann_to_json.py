@@ -107,6 +107,7 @@ class AntibodyToJSON:
                 if key == "Note":
                     pass
                 else:
+                    # If the key is not new save it in self.old.key for the next loop.
                     self.old_key = key
                 continue
 
